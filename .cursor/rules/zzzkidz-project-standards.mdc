@@ -1,0 +1,961 @@
+---
+description: Core engineering, design, performance, SEO, security, and quality standards for ZZZKidz
+alwaysApply: true
+---
+
+# ZZZKidz Project Standards
+
+These rules govern every change in this repository.
+
+The goal is to build a premium, highly responsive, high-performance, SEO-ready, media-rich website that is easy to maintain, easy to market digitally, secure by default, and production-ready on Vercel.
+
+Prioritize:
+
+1. User experience
+2. Mobile responsiveness
+3. Performance
+4. SEO and digital marketing
+5. Accessibility
+6. Security
+7. Reusability and maintainability
+8. Visual polish
+9. Reliability
+10. Simplicity
+
+Never sacrifice these priorities for speed of implementation.
+
+## Rule Compliance Reporting
+
+Before and after implementing changes, check against this rule book.
+
+If any proposed or completed change conflicts with these standards:
+
+- Call it out clearly to the user
+- Name the violated rule section(s)
+- Explain the conflict briefly
+- Prefer a compliant alternative unless the user explicitly overrides
+
+Do not silently ship work that violates non-negotiable principles.
+
+---
+
+# 1. General Engineering Principles
+
+- Write production-quality code.
+- Keep code simple, readable, predictable, and maintainable.
+- Prefer established project patterns over introducing new patterns.
+- Make the smallest appropriate change for the requested task.
+- Do not refactor unrelated code unless necessary to safely complete the task.
+- Do not introduce unnecessary abstractions.
+- Do not duplicate logic that can reasonably be shared.
+- Prefer explicit, understandable code over clever code.
+- Avoid premature optimization, but never knowingly introduce avoidable performance problems.
+- Do not create technical debt unnecessarily.
+- Preserve existing functionality unless the task explicitly requires changing it.
+- Never silently change user-facing behaviour.
+- When a meaningful architectural decision is required, choose the simplest scalable approach.
+
+---
+
+# 2. Architecture and Code Reuse
+
+Code reuse is a core project requirement.
+
+- Reuse existing components, utilities, hooks, layouts, styles, and services before creating new ones.
+- Search the existing codebase before creating a new component or utility.
+- If a behaviour is used in multiple places, consider making it reusable.
+- Global behaviours must be implemented once and reused wherever possible.
+- Shared visual patterns must use shared components rather than duplicated markup.
+- Shared business logic must live in reusable utilities, services, hooks, or modules.
+- Do not copy and paste large blocks of code between pages.
+- Avoid page-specific implementations when a reusable solution is practical.
+- Prefer composition over unnecessary inheritance.
+- Keep components focused and reusable.
+- Avoid components becoming massive monolithic files.
+- Separate presentation, business logic, data fetching, and reusable utilities where appropriate.
+- Maintain a clear folder structure.
+- Do not create duplicate versions of the same component with slightly different names unless there is a real functional difference.
+- Before introducing a new abstraction, confirm that an existing abstraction cannot be extended.
+
+## Global Design Behaviour
+
+Implement recurring behaviours centrally where practical:
+
+- Typography
+- Spacing
+- Containers
+- Buttons
+- Forms
+- Cards
+- Navigation
+- Responsive breakpoints
+- Shadows
+- Borders
+- Radius
+- Animations
+- Transitions
+- Loading states
+- Error states
+- Focus states
+- Section layouts
+- Media handling
+
+Global behaviour must not be recreated independently on every page.
+
+---
+
+# 3. Technology and Deployment
+
+The production application is intended to run on:
+
+- Next.js
+- TypeScript
+- Tailwind CSS or the existing project styling system
+- Vercel for deployment
+- GoDaddy for domain registration/DNS where applicable
+
+Rules:
+
+- Build in a manner compatible with Vercel production deployment.
+- Do not introduce server/runtime dependencies that are incompatible with Vercel without a strong reason.
+- Do not hardcode development URLs.
+- Production URLs must come from configuration/environment variables where appropriate.
+- Never assume localhost in production.
+- Production must use HTTPS.
+- Do not hardcode domain-specific assumptions into reusable components.
+- Ensure server/client boundaries are intentional.
+- Prefer server-side rendering/static generation where it provides SEO or performance benefits.
+- Use client-side JavaScript only where necessary.
+
+---
+
+# 4. Mobile-First Responsive Design
+
+Mobile responsiveness is NON-NEGOTIABLE.
+
+The website must work correctly across:
+
+- Small mobile phones
+- Large mobile phones
+- Small tablets
+- Large tablets
+- Small laptops
+- Standard laptops
+- Large desktop monitors
+- Very wide screens
+
+There must be no:
+
+- Horizontal scrolling
+- Clipped content
+- Overlapping elements
+- Broken grids
+- Distorted images
+- Broken navigation
+- Overflowing text
+- Inaccessible buttons
+- Misaligned sections
+- Unusable forms
+- Unsymmetrical layouts
+- Unexpected empty space
+- Content hidden accidentally at certain widths
+
+Rules:
+
+- Build mobile-first.
+- Enhance progressively for larger screens.
+- Do not design desktop first and merely shrink it for mobile.
+- Use responsive layouts rather than fixed-position layouts wherever possible.
+- Avoid hardcoded widths unless genuinely required.
+- Use fluid sizing where appropriate.
+- Use responsive typography.
+- Use responsive spacing.
+- Use responsive images.
+- Use responsive grids/flex layouts.
+- Ensure navigation works properly on touch devices.
+- Ensure buttons and interactive elements are easy to tap.
+- Avoid hover-only functionality.
+- Do not rely on mouse interactions for critical functionality.
+- Test at multiple viewport widths before considering a task complete.
+- Consider extremely narrow screens as well as large displays.
+- Ensure content remains visually balanced at every breakpoint.
+
+Never fix a responsive problem by hiding meaningful content unless explicitly approved.
+
+---
+
+# 5. Visual Design: Premium and Glossy
+
+The website must feel:
+
+- Premium
+- Modern
+- Polished
+- Energetic
+- Trustworthy
+- Professional
+- Visually refined
+
+Avoid:
+
+- Generic template appearance
+- Excessive gradients
+- Excessive rounded cards
+- Random shadows
+- Excessive animations
+- Cheap-looking UI effects
+- Inconsistent spacing
+- Inconsistent typography
+- Visually noisy layouts
+- Excessive decorative elements
+- Unnecessary glassmorphism
+- Overly flashy interactions
+
+Use:
+
+- Strong visual hierarchy
+- Consistent spacing
+- Intentional typography
+- High-quality imagery
+- Sophisticated contrast
+- Consistent border/radius/shadow treatment
+- Subtle depth
+- Controlled animation
+- Strong composition
+- Generous whitespace where appropriate
+
+Premium does not mean excessive.
+
+Every visual effect must have a purpose.
+
+---
+
+# 6. Design System
+
+Use a consistent design system throughout the application.
+
+Centralize where practical:
+
+- Colors
+- Typography
+- Font sizes
+- Font weights
+- Spacing
+- Breakpoints
+- Border radius
+- Shadows
+- Container widths
+- Button styles
+- Form styles
+- Animation timings
+- Z-index conventions
+
+Do not introduce arbitrary values repeatedly when a design token can be used.
+
+Avoid visual drift between pages.
+
+A button should look like the same product wherever it appears.
+
+A heading hierarchy should remain consistent throughout the site.
+
+---
+
+# 7. Media Optimization
+
+This website is media-heavy. Media performance is therefore a core engineering requirement.
+
+Images and videos must:
+
+- Load reliably
+- Render correctly
+- Maintain aspect ratio
+- Avoid layout shifts
+- Look sharp without excessive file size
+- Work correctly on mobile and desktop
+- Not make the page feel slow or "sticky"
+
+Rules:
+
+- Use modern image formats where supported.
+- Use responsive image sizing.
+- Serve appropriately sized images rather than unnecessarily large originals.
+- Lazy-load non-critical media.
+- Prioritize above-the-fold media appropriately.
+- Define image dimensions or aspect ratios before loading.
+- Prevent cumulative layout shift.
+- Use optimized thumbnails/posters for videos.
+- Do not load full-resolution media when a smaller version is sufficient.
+- Do not embed unnecessarily heavy media.
+- Use CDN-backed media delivery where practical.
+- Prefer optimized media services such as Cloudinary or equivalent where appropriate.
+- Do not load every image on a page immediately unless justified.
+- Avoid large background images when a better implementation exists.
+
+## Video Rules
+
+- Do not autoplay heavy videos unless there is a clear UX reason.
+- Use poster images for videos.
+- Use appropriate preload behaviour.
+- Do not load multiple large videos simultaneously without necessity.
+- Ensure videos have correct aspect ratios.
+- Ensure controls are usable on mobile.
+- Ensure videos do not overflow containers.
+- Provide graceful fallback behaviour if media fails.
+- Do not let media block page usability.
+
+Never use a giant image/video simply because the source asset is available.
+
+---
+
+# 8. Performance
+
+Performance is a first-class feature.
+
+Optimize for:
+
+- Core Web Vitals
+- Largest Contentful Paint
+- Cumulative Layout Shift
+- Interaction to Next Paint
+- Time to First Byte
+- Total page weight
+- JavaScript execution
+- Image delivery
+- Font loading
+
+Rules:
+
+- Minimize unnecessary JavaScript.
+- Avoid unnecessary client components.
+- Prefer server-rendered content where practical.
+- Avoid large dependencies for small functionality.
+- Reuse existing dependencies before adding new ones.
+- Avoid expensive rendering logic.
+- Avoid unnecessary API requests.
+- Cache data where appropriate.
+- Avoid rendering hidden heavy components unnecessarily.
+- Defer non-critical functionality.
+- Lazy-load non-critical media and components where appropriate.
+- Avoid unnecessary third-party scripts.
+- Third-party marketing scripts must be added intentionally and efficiently.
+
+Do not optimize by sacrificing usability, accessibility, SEO, or visual quality.
+
+---
+
+# 9. SEO
+
+SEO is NON-NEGOTIABLE.
+
+Every publicly accessible page must be intentionally optimized for search engines.
+
+Rules:
+
+- Every page must have a unique title.
+- Every page must have a unique meta description.
+- Use canonical URLs where appropriate.
+- Use Open Graph metadata.
+- Use appropriate social sharing metadata.
+- Use semantic HTML.
+- Maintain logical heading hierarchy.
+- Use descriptive URLs.
+- Use descriptive internal links.
+- Use descriptive anchor text.
+- Avoid duplicate content where possible.
+- Generate/update sitemap functionality.
+- Provide robots.txt functionality.
+- Ensure important pages are crawlable.
+- Do not accidentally block search engines.
+- Do not expose staging/test URLs as canonical URLs.
+- Use structured data/schema markup where appropriate.
+- Ensure structured data matches visible page content.
+- Optimize image filenames and alt text appropriately.
+- Avoid keyword stuffing.
+- Do not generate meaningless SEO text solely for search engines.
+
+Important SEO content should be rendered in crawlable HTML rather than relying exclusively on client-side JavaScript.
+
+---
+
+# 10. Digital Marketing
+
+The website must be built as a marketing platform, not merely a brochure.
+
+Every important page should support conversion.
+
+Include infrastructure for:
+
+- Contact forms
+- Lead capture
+- Enquiry forms
+- Strong calls-to-action
+- Social sharing
+- Campaign landing pages
+- Search traffic
+- Paid advertising traffic
+- Analytics
+- Conversion tracking
+- Attribution
+- Remarketing where legally appropriate
+
+Important CTAs should be:
+
+- Clearly visible
+- Consistent
+- Mobile-friendly
+- Action-oriented
+- Trackable
+
+Do not create pages without considering their marketing purpose.
+
+Every major page should have a clear intended action.
+
+Examples:
+
+- Enquire
+- Book a demo
+- Contact us
+- Request information
+- Talk to the team
+- Register interest
+
+---
+
+# 11. Analytics and Tracking
+
+The website must support appropriate analytics and marketing tracking.
+
+Potential integrations may include:
+
+- Google Analytics
+- Google Search Console
+- Google Tag Manager
+- Meta Pixel
+- Other approved advertising/conversion platforms
+
+Rules:
+
+- Tracking must be intentional and documented.
+- Track important conversions.
+- Track CTA interactions where useful.
+- Track form submissions.
+- Avoid duplicate events.
+- Do not fire events multiple times accidentally.
+- Do not expose tracking secrets client-side.
+- Do not hardcode private API credentials.
+- Respect applicable privacy/consent requirements.
+- Marketing scripts must not significantly degrade performance.
+
+Do not remove existing analytics/tracking without explicit approval.
+
+---
+
+# 12. Accessibility
+
+Build to a strong WCAG-aligned standard.
+
+Rules:
+
+- Use semantic HTML.
+- Provide meaningful alt text for informative images.
+- Decorative images should be appropriately marked.
+- Maintain logical heading hierarchy.
+- Ensure sufficient contrast.
+- Ensure keyboard navigation works.
+- Provide visible focus states.
+- Do not rely exclusively on color.
+- Forms must have proper labels.
+- Interactive elements must have accessible names.
+- Modals/dialogues must be keyboard accessible.
+- Mobile interactions must remain accessible.
+- Respect reduced-motion preferences where practical.
+- Avoid inaccessible custom controls when native HTML can solve the problem.
+
+Accessibility must not be treated as an afterthought.
+
+---
+
+# 13. Security and Secrets
+
+Security is NON-NEGOTIABLE.
+
+NEVER expose or commit:
+
+- API keys
+- API secrets
+- Database credentials
+- Passwords
+- Private tokens
+- Authentication secrets
+- Service account credentials
+- Encryption keys
+- Webhook secrets
+- Private environment variables
+- Internal infrastructure credentials
+
+Rules:
+
+- Use environment variables for secrets.
+- Never commit `.env` files containing secrets.
+- Maintain an appropriate `.gitignore`.
+- Use public environment variables only when the value is genuinely safe to expose.
+- Assume all client-side code is public.
+- Never place secrets in frontend JavaScript.
+- Never expose privileged API credentials in browser requests.
+- Validate and sanitize untrusted input.
+- Protect server-side endpoints appropriately.
+- Avoid leaking internal errors to users.
+- Do not expose stack traces in production.
+- Do not expose internal database structure unnecessarily.
+- Do not log secrets.
+- Do not include secrets in URLs.
+- Do not hardcode credentials in source files.
+- Do not copy secrets into documentation or examples.
+
+If a secret appears in code, stop and fix the security issue rather than continuing.
+
+---
+
+# 14. Environment Variables
+
+Use environment variables appropriately.
+
+Rules:
+
+- Separate development and production configuration where necessary.
+- Never commit actual production secrets.
+- Clearly distinguish public and server-only environment variables.
+- Variables intended for browser exposure must contain only non-sensitive information.
+- Document required environment variables without documenting their secret values.
+- Fail safely when required configuration is missing.
+- Never print environment variables for debugging in production.
+
+---
+
+# 15. Forms and User Input
+
+Forms are conversion-critical and must be robust.
+
+Rules:
+
+- Validate input on the client for UX.
+- Validate input again on the server for security.
+- Provide clear validation messages.
+- Prevent duplicate submissions.
+- Provide loading states.
+- Provide success states.
+- Provide failure states.
+- Preserve user-entered data where appropriate after validation failure.
+- Make forms fully usable on mobile.
+- Use accessible labels and error messages.
+- Protect forms from obvious abuse/spam where appropriate.
+- Track successful conversions where analytics is configured.
+
+Never assume client-side validation is sufficient for security.
+
+---
+
+# 16. Error Handling
+
+Every production feature must have sensible failure behaviour.
+
+Rules:
+
+- Handle network failures.
+- Handle missing data.
+- Handle invalid input.
+- Handle failed media loading.
+- Handle API failures.
+- Provide meaningful user-facing messages.
+- Avoid exposing technical implementation details.
+- Never leave users with a broken-looking interface.
+- Use appropriate loading, empty, success, and error states.
+
+---
+
+# 17. Loading States
+
+Loading states must feel intentional and premium.
+
+Use appropriate:
+
+- Skeletons
+- Spinners
+- Placeholders
+- Progressive loading
+- Blur-up techniques where appropriate
+
+Rules:
+
+- Avoid content jumping during load.
+- Do not display unnecessary loading indicators for extremely short operations.
+- Do not block the entire page unnecessarily.
+- Preserve layout dimensions where possible.
+
+---
+
+# 18. Animation and Interaction
+
+Animations should enhance the experience rather than distract from content.
+
+Rules:
+
+- Prefer subtle, polished animation.
+- Keep transitions consistent.
+- Avoid excessive motion.
+- Avoid animation that delays access to content.
+- Avoid animation that harms performance.
+- Respect reduced-motion preferences.
+- Do not animate every element simply because animation is possible.
+- Avoid parallax unless justified.
+- Avoid scroll-jacking.
+- Avoid interaction patterns that feel gimmicky.
+
+---
+
+# 19. Typography
+
+Typography must remain readable and responsive.
+
+Rules:
+
+- Use a controlled typography system.
+- Avoid excessive font families.
+- Optimize font loading.
+- Ensure text remains readable on small screens.
+- Prevent unexpected text overflow.
+- Maintain consistent heading hierarchy.
+- Use appropriate line heights.
+- Avoid walls of text.
+- Ensure important marketing copy remains visually prominent.
+
+---
+
+# 20. Navigation
+
+Navigation must be intuitive and consistent.
+
+Rules:
+
+- Navigation must work on mobile and desktop.
+- Mobile navigation must be touch-friendly.
+- Critical pages must remain easily accessible.
+- Avoid excessively deep navigation structures.
+- Maintain consistent header/footer behaviour.
+- Ensure active states are clear.
+- Ensure keyboard accessibility.
+- Do not hide important navigation behind confusing interactions.
+
+---
+
+# 21. Images and Content Quality
+
+Never use placeholder content unless explicitly requested.
+
+Do not use:
+
+- Lorem ipsum
+- Fake testimonials
+- Fake statistics
+- Fake school names
+- Fake client logos
+- Fake awards
+- Fake reviews
+- Fake claims
+- Placeholder images presented as real content
+
+If content is unavailable:
+
+- Use clearly identified placeholders only when necessary.
+- Do not invent factual claims.
+- Do not invent marketing proof.
+- Do not fabricate social proof.
+
+For real production assets, prioritize high-quality, relevant photography.
+
+---
+
+# 22. Content and Conversion UX
+
+Content must support the user's decision-making process.
+
+Important pages should clearly communicate:
+
+- What the program is
+- Who it is for
+- Why it matters
+- Benefits
+- How it works
+- Evidence/credibility where available
+- What makes the program different
+- What the next step is
+
+Avoid unnecessary text merely to make pages longer.
+
+Marketing content should be clear, credible, concise, and persuasive.
+
+---
+
+# 23. SEO-Friendly Content Structure
+
+Where applicable, structure pages to support both users and search engines.
+
+Use:
+
+- Clear H1
+- Logical H2/H3 hierarchy
+- Descriptive headings
+- Internal links
+- Relevant supporting content
+- FAQs where genuinely useful
+- Structured data where appropriate
+
+Do not create SEO content solely to manipulate rankings.
+
+---
+
+# 24. URLs and Routing
+
+Routes must be:
+
+- Readable
+- Stable
+- Descriptive
+- SEO-friendly
+
+Avoid unnecessary query parameters for permanent page identity.
+
+Do not change an established production URL without considering redirects and SEO impact.
+
+When replacing URLs, preserve SEO value through appropriate redirects where required.
+
+---
+
+# 25. Third-Party Services
+
+Before adding a third-party package, SDK, widget, script, analytics provider, or external service:
+
+- Confirm it is actually necessary.
+- Check whether existing functionality can solve the problem.
+- Consider performance impact.
+- Consider privacy/security implications.
+- Consider vendor lock-in.
+- Consider whether it works with Vercel.
+- Keep third-party integrations isolated where practical.
+
+Never add dependencies merely because they are convenient.
+
+---
+
+# 26. Dependency Management
+
+Before installing a package:
+
+1. Check whether the project already has a suitable dependency.
+2. Check whether native platform/framework functionality is sufficient.
+3. Prefer mature, maintained dependencies.
+4. Avoid dependencies that are excessive for the problem.
+5. Avoid duplicate libraries solving the same problem.
+
+Do not add packages without justification.
+
+---
+
+# 27. Testing and Verification
+
+Every meaningful change must be verified.
+
+Before considering a task complete:
+
+- Run relevant tests.
+- Run linting.
+- Run type checking.
+- Run the production build where appropriate.
+- Check for runtime errors.
+- Check affected pages.
+- Check mobile responsiveness.
+- Check desktop responsiveness.
+- Check forms.
+- Check links.
+- Check CTAs.
+- Check media.
+- Check analytics/conversion events where applicable.
+- Check SEO metadata for affected pages.
+
+For significant UI changes, inspect the result visually rather than relying only on successful compilation.
+
+---
+
+# 28. Performance Verification
+
+For significant page changes, verify where practical:
+
+- Lighthouse performance
+- Core Web Vitals
+- Image loading
+- Font loading
+- JavaScript bundle impact
+- Layout stability
+- Mobile performance
+
+A page is not considered complete merely because it renders without errors.
+
+---
+
+# 29. Browser Compatibility
+
+The website should behave consistently across modern:
+
+- Chrome
+- Safari
+- Edge
+- Firefox
+
+Pay particular attention to:
+
+- Mobile Safari
+- Android browsers
+- Responsive layouts
+- Media playback
+- Form controls
+- Navigation
+- Sticky elements
+- Viewport behaviour
+
+Do not assume Chrome desktop behaviour represents all users.
+
+---
+
+# 30. Git and Changes
+
+- Keep changes focused.
+- Do not modify unrelated files.
+- Do not commit generated junk.
+- Do not commit secrets.
+- Do not commit temporary debugging code.
+- Remove console/debug statements that are not intentionally required.
+- Keep commits logically coherent where commit creation is part of the workflow.
+
+Never use broad destructive commands without understanding their impact.
+
+---
+
+# 31. Debugging
+
+When fixing a bug:
+
+1. Identify the root cause.
+2. Fix the underlying issue rather than masking the symptom.
+3. Avoid unrelated refactoring.
+4. Re-test the affected functionality.
+5. Check for regressions.
+
+Do not introduce fragile hacks merely to make an error disappear.
+
+---
+
+# 32. Production Safety
+
+Before production deployment, verify:
+
+- Build succeeds.
+- No secrets are exposed.
+- No development URLs remain.
+- No placeholder content remains unintentionally.
+- SEO metadata is correct.
+- Sitemap is correct.
+- robots.txt is correct.
+- Analytics is configured correctly.
+- Forms work.
+- CTAs work.
+- Media loads correctly.
+- Mobile layouts work.
+- Desktop layouts work.
+- Error states work.
+- HTTPS works.
+- Production environment variables are configured.
+- No obvious console errors remain.
+- No broken links remain.
+
+---
+
+# 33. Change Discipline
+
+Before changing an existing feature:
+
+- Understand how it currently works.
+- Search for dependencies/usages.
+- Determine whether the behaviour is shared.
+- Avoid breaking existing consumers.
+- Preserve existing contracts unless explicitly instructed otherwise.
+
+Never rewrite an existing system simply because another implementation is aesthetically preferable.
+
+---
+
+# 34. Cursor Behaviour
+
+When implementing a task:
+
+- Inspect the existing codebase before creating new code.
+- Reuse existing patterns whenever possible.
+- Do not invent architecture unnecessarily.
+- Do not generate duplicate components.
+- Do not create unnecessary files.
+- Do not modify unrelated files.
+- Prefer reusable solutions.
+- Think about mobile, SEO, accessibility, performance, security, and maintainability before implementation.
+- Consider the production consequences of every change.
+- Do not assume a feature is complete merely because it compiles.
+- Verify the actual user experience.
+- Flag any change that conflicts with this rule book before proceeding or immediately after discovering the conflict.
+
+When uncertain between two technically valid approaches, prefer the one that:
+
+1. Is simpler
+2. Is more reusable
+3. Is more performant
+4. Is more accessible
+5. Is easier to maintain
+6. Is safer
+7. Is more SEO-friendly
+
+---
+
+# 35. Definition of Done
+
+A task is complete only when:
+
+- The requested functionality works.
+- Existing functionality remains intact.
+- The implementation is responsive.
+- The UI remains visually polished.
+- Code is reusable.
+- No unnecessary duplication exists.
+- Performance has been considered.
+- SEO has been considered.
+- Accessibility has been considered.
+- Security has been considered.
+- Media works correctly.
+- Error/loading states are handled where applicable.
+- Relevant tests/lint/type checks/builds pass.
+- No secrets are exposed.
+- No unintended placeholder content remains.
+- The result is suitable for production deployment.
+
+---
+
+# NON-NEGOTIABLE PRINCIPLES
+
+Never compromise these principles unless explicitly instructed:
+
+1. Mobile responsiveness
+2. SEO and digital marketing readiness
+3. Code reuse and maintainability
+4. Media optimization
+5. Premium visual quality
+6. Security and secret protection
+7. Accessibility
+8. Performance
+9. Production reliability
+10. No unnecessary complexity

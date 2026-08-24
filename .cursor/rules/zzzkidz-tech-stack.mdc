@@ -1,0 +1,68 @@
+---
+description: ZZZKidz approved tech stack and dependency discipline — complements project standards without duplicating them
+alwaysApply: true
+---
+
+# Technology Stack & Dependency Discipline
+
+This rule defines the default architecture and dependency policy for ZZZKidz.
+It complements `.cursor/rules/zzzkidz-project-standards.mdc` and must not rewrite or replace that rulebook.
+
+## Approved Default Stack
+
+Use this stack as the default architecture unless the user explicitly overrides it:
+
+| Concern | Technology |
+|---|---|
+| Framework | Next.js (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| UI components | shadcn/ui |
+| Accessible primitives | Radix UI (when required) |
+| Animation | Framer Motion (premium, restrained) |
+| Icons | Lucide Icons |
+| CMS | Sanity CMS |
+| Images | `next/image` for standard image optimization |
+| Video / media-heavy workflows | Cloudinary (primary) |
+| App deployment | Vercel |
+| Domain / DNS | GoDaddy only |
+| Runtime validation | Zod (when required) |
+| E2E tests | Playwright (important flows) |
+| Unit tests | Vitest (where appropriate) |
+| Analytics | Google Analytics 4 |
+| Search | Google Search Console |
+| Tag management | Google Tag Manager |
+| Ads / remarketing | Meta Pixel; Google Ads conversion tracking where required |
+
+## Tech-Stack Rules
+
+- Prefer native Next.js/browser functionality before introducing another dependency.
+- Before installing any package, check whether the existing stack already solves the problem.
+- Do not introduce duplicate libraries with overlapping responsibilities.
+- Keep client-side JavaScript to the minimum necessary.
+- Prefer Server Components unless client-side interactivity is required.
+- Keep the architecture fully compatible with Vercel.
+- Use environment variables for configuration and secrets.
+- Never expose private credentials or secrets to client-side code.
+
+Do not substitute alternate libraries for the approved stack without explicit instruction
+(e.g. do not swap Framer Motion for another animation library, or Sanity for another CMS).
+
+## Technology Selection & Dependency Discipline
+
+Before introducing any new library, framework, SDK, service, or dependency:
+
+1. Check the existing codebase for an existing solution.
+2. Check whether Next.js, TypeScript, Tailwind, browser APIs, or the current stack can solve the requirement.
+3. Only introduce a new dependency when there is a clear technical justification.
+4. Prefer lightweight, mature, well-maintained dependencies.
+5. Consider performance, SEO, accessibility, security, maintainability, and Vercel compatibility before adding it.
+6. Do not add a dependency merely for convenience.
+7. Do not create multiple implementations of the same functionality.
+8. Reuse and extend existing project abstractions wherever practical.
+
+## Enforcement
+
+- Generate future code consistently with this stack and this discipline.
+- If a requested change would violate this rule or the ZZZKidz project standards, flag the conflict before proceeding.
+- Do not modify unrelated project rules or architecture merely to apply this directive.
