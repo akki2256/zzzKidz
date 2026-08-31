@@ -3,7 +3,8 @@ import { Container } from "@/components/shared/container";
 import { CtaBand } from "@/components/shared/cta-band";
 import { PageHero } from "@/components/shared/page-hero";
 import { Reveal } from "@/components/shared/reveal";
-import { PremiumBenefitsPage } from "@/components/premium-coaching-layout/pages/premium-benefits-page";
+import { ActiveBenefitsPage } from "@/components/active-layout/pages/active-benefits-page";
+import { PulseBenefitsPage } from "@/components/pulse-layout/pages/pulse-benefits-page";
 import { StudioBenefitsPage } from "@/components/studio-layout/pages/studio-benefits-page";
 import { MultiLayoutPage } from "@/components/theme/multi-layout-page";
 import {
@@ -37,8 +38,9 @@ export default function BenefitsPage() {
   return (
     <MultiLayoutPage
       original={<OriginalBenefitsPage />}
-      premium={<PremiumBenefitsPage />}
       studio={<StudioBenefitsPage />}
+      active={<ActiveBenefitsPage />}
+      pulse={<PulseBenefitsPage />}
     />
   );
 }

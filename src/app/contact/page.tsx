@@ -3,7 +3,8 @@ import { Mail } from "lucide-react";
 import { ContactForm } from "@/components/sections/contact-form";
 import { Container } from "@/components/shared/container";
 import { PageHero } from "@/components/shared/page-hero";
-import { PremiumContactPage } from "@/components/premium-coaching-layout/pages/premium-contact-page";
+import { ActiveContactPage } from "@/components/active-layout/pages/active-contact-page";
+import { PulseContactPage } from "@/components/pulse-layout/pages/pulse-contact-page";
 import { StudioContactPage } from "@/components/studio-layout/pages/studio-contact-page";
 import { MultiLayoutPage } from "@/components/theme/multi-layout-page";
 import { siteConfig } from "@/content/site";
@@ -72,8 +73,9 @@ export default function ContactPage() {
   return (
     <MultiLayoutPage
       original={<OriginalContactPage />}
-      premium={<PremiumContactPage />}
       studio={<StudioContactPage />}
+      active={<ActiveContactPage />}
+      pulse={<PulseContactPage />}
     />
   );
 }

@@ -15,25 +15,35 @@ export function ThemeSelector({ className, compact = false }: ThemeSelectorProps
   const reduceMotion = useReducedMotion();
 
   const track =
-    layout === "premium"
-      ? "border-white/12 bg-white/[0.06]"
-      : layout === "studio"
-        ? "border-white/20 bg-white/[0.06]"
-        : "border-white/15 bg-black/30";
+    layout === "studio"
+      ? "border-white/20 bg-white/[0.06]"
+      : layout === "pulse"
+        ? "border-white/15 bg-[rgba(120,120,120,0.28)] backdrop-blur-md"
+        : layout === "active"
+          ? "border-white/25 bg-black/20"
+          : "border-white/15 bg-black/30";
 
   const activePill =
-    layout === "premium"
-      ? "bg-[#f4f2f7] text-[#100c18]"
-      : layout === "studio"
-        ? "bg-[#c8ff00] text-[#0b0b0b]"
-        : "bg-accent text-white shadow-sm";
+    layout === "studio"
+      ? "bg-[#c8ff00] text-[#0b0b0b]"
+      : layout === "pulse"
+        ? "bg-[#13ff72] text-[#0b0b0b]"
+        : layout === "active"
+          ? "bg-[#ec1f8f] text-white"
+          : "bg-accent text-white shadow-sm";
 
   const ring =
-    layout === "premium"
-      ? "focus-visible:ring-white/60 focus-visible:ring-offset-[#0b0812]"
-      : layout === "studio"
-        ? "focus-visible:ring-[#c8ff00] focus-visible:ring-offset-black"
-        : "focus-visible:ring-accent";
+    layout === "studio"
+      ? "focus-visible:ring-[#c8ff00] focus-visible:ring-offset-black"
+      : layout === "pulse"
+        ? "focus-visible:ring-[#13ff72] focus-visible:ring-offset-black"
+        : layout === "active"
+          ? "focus-visible:ring-[#ffc215] focus-visible:ring-offset-[#7c5cbf]"
+          : "focus-visible:ring-accent";
+
+  const idleText = "text-white/60 hover:text-white";
+
+  const labelText = layout === "original" ? "text-foreground-muted" : "text-white/50";
 
   return (
     <div
@@ -42,18 +52,13 @@ export function ThemeSelector({ className, compact = false }: ThemeSelectorProps
       aria-label="Website layout"
     >
       {!compact ? (
-        <span
-          className={cn(
-            "text-[10px] font-semibold uppercase tracking-[0.12em]",
-            layout === "original" ? "text-foreground-muted" : "text-white/50",
-          )}
-        >
+        <span className={cn("text-[10px] font-semibold uppercase tracking-[0.12em]", labelText)}>
           Layout
         </span>
       ) : null}
       <div
         className={cn(
-          "inline-flex rounded-full border p-0.5 transition-opacity duration-200",
+          "inline-flex flex-wrap rounded-full border p-0.5 transition-opacity duration-200",
           track,
           isTransitioning && !reduceMotion && "opacity-80",
         )}
@@ -69,9 +74,7 @@ export function ThemeSelector({ className, compact = false }: ThemeSelectorProps
               "min-h-[32px] rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] transition-all duration-200",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
               ring,
-              layout === option.value
-                ? activePill
-                : "text-white/60 hover:text-white",
+              layout === option.value ? activePill : idleText,
             )}
           >
             {option.label}

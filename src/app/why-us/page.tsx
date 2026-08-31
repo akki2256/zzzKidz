@@ -4,7 +4,8 @@ import { CtaBand } from "@/components/shared/cta-band";
 import { FeatureCard } from "@/components/shared/feature-card";
 import { PageHero } from "@/components/shared/page-hero";
 import { Reveal } from "@/components/shared/reveal";
-import { PremiumWhyUsPage } from "@/components/premium-coaching-layout/pages/premium-why-us-page";
+import { ActiveWhyUsPage } from "@/components/active-layout/pages/active-why-us-page";
+import { PulseWhyUsPage } from "@/components/pulse-layout/pages/pulse-why-us-page";
 import { StudioWhyUsPage } from "@/components/studio-layout/pages/studio-why-us-page";
 import { MultiLayoutPage } from "@/components/theme/multi-layout-page";
 import { peComparison, promises, whyUsPillars } from "@/content/site";
@@ -20,8 +21,9 @@ export default function WhyUsPage() {
   return (
     <MultiLayoutPage
       original={<OriginalWhyUsPage />}
-      premium={<PremiumWhyUsPage />}
       studio={<StudioWhyUsPage />}
+      active={<ActiveWhyUsPage />}
+      pulse={<PulseWhyUsPage />}
     />
   );
 }

@@ -332,165 +332,6 @@
   }
 }
 
-/* Premium coaching layout — dark aurora marketplace tokens */
-html[data-layout="premium"] {
-  --p-bg: #08060d;
-  --p-bg-deep: #050308;
-  --p-surface: rgba(255, 255, 255, 0.045);
-  --p-surface-strong: rgba(255, 255, 255, 0.075);
-  --p-panel: rgba(0, 0, 0, 0.34);
-  --p-border: rgba(255, 255, 255, 0.1);
-  --p-border-strong: rgba(255, 255, 255, 0.2);
-  --p-text: #ffffff;
-  --p-muted: rgba(255, 255, 255, 0.66);
-  --p-faint: rgba(255, 255, 255, 0.45);
-  --p-violet: #6d5dfc;
-  --p-rose: #e0446d;
-  --p-blue: #2f7ef7;
-}
-
-html[data-layout="premium"] body {
-  background: var(--p-bg);
-  color: var(--p-text);
-  font-family: var(--font-premium-sans), var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-}
-
-@layer utilities {
-  .premium-container {
-    width: min(100% - 2rem, 78rem);
-    margin-inline: auto;
-  }
-
-  .premium-section {
-    padding-block: clamp(2.5rem, 5vw, 4rem);
-  }
-
-  .premium-display {
-    font-family: var(--font-premium-sans), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    line-height: 1.15;
-  }
-
-  /* Aurora backdrop — purple bloom sweeping in from the top-right.
-     Painted on a fixed-height pseudo-element so the gradient geometry stays
-     tied to the hero band rather than the (variable) full page height. */
-  html[data-layout="premium"] .premium-shell {
-    position: relative;
-    background-color: var(--p-bg);
-    isolation: isolate;
-  }
-
-  html[data-layout="premium"] .premium-shell::before {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto 0;
-    z-index: -1;
-    height: 880px;
-    pointer-events: none;
-    background-image:
-      radial-gradient(1400px 700px at 78% -12%, rgba(158, 66, 194, 0.55), transparent 68%),
-      radial-gradient(1000px 540px at 44% -8%, rgba(102, 54, 164, 0.36), transparent 66%),
-      radial-gradient(700px 420px at 2% 8%, rgba(58, 40, 118, 0.24), transparent 64%);
-  }
-
-  .p-surface {
-    background: var(--p-surface);
-    border: 1px solid var(--p-border);
-    border-radius: 20px;
-  }
-
-  .p-panel {
-    background: var(--p-panel);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 14px;
-  }
-
-  .p-glass {
-    background: rgba(22, 18, 34, 0.74);
-    border: 1px solid var(--p-border);
-    border-radius: 16px;
-    backdrop-filter: blur(14px);
-  }
-
-  .p-muted {
-    color: var(--p-muted);
-  }
-
-  .p-faint {
-    color: var(--p-faint);
-  }
-
-  .p-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    border-radius: 999px;
-    border: 1px solid var(--p-border);
-    background: rgba(255, 255, 255, 0.06);
-    padding: 0.4rem 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.82);
-  }
-
-  /* Primary CTA = light pill on dark, matching reference buttons */
-  .premium-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    min-height: 44px;
-    padding: 0.65rem 1.4rem;
-    border-radius: 999px;
-    background: #f4f2f7;
-    color: #100c18;
-    font-size: 0.875rem;
-    font-weight: 700;
-    transition: background 0.2s ease, transform 0.2s ease;
-  }
-
-  .premium-btn:hover {
-    background: #ffffff;
-  }
-
-  .premium-btn-outline {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    min-height: 44px;
-    padding: 0.65rem 1.4rem;
-    border-radius: 999px;
-    border: 1px solid var(--p-border-strong);
-    background: rgba(255, 255, 255, 0.04);
-    color: #ffffff;
-    font-size: 0.875rem;
-    font-weight: 600;
-  }
-
-  .premium-btn-outline:hover {
-    background: rgba(255, 255, 255, 0.09);
-  }
-
-  html[data-layout="premium"] .premium-main {
-    background: transparent;
-    color: var(--p-text);
-  }
-
-  html[data-layout="premium"] .premium-form input,
-  html[data-layout="premium"] .premium-form textarea,
-  html[data-layout="premium"] .premium-form select {
-    border-color: var(--p-border);
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--p-text);
-    border-radius: 12px;
-  }
-
-  html[data-layout="premium"] .premium-form label {
-    color: rgba(255, 255, 255, 0.8);
-  }
-}
 
 /* ==========================================================================
    Studio layout — bold editorial fitness-brand language:
@@ -687,5 +528,479 @@ html[data-layout="studio"] h4 {
 
   html[data-layout="studio"] .studio-form button[type="submit"]:hover:not(:disabled) {
     background: var(--s-accent-hover);
+  }
+}
+
+/* ==========================================================================
+   Active layout — activekids.org language:
+   navy utility bar, purple nav, magenta CTAs, full-bleed hero, mint mission,
+   royal-blue winding path FAQ, pastel quote, colorful program cards.
+   ========================================================================== */
+/* Palette adapted from https://thelittlegym.in/ brand CSS (stylev23 / tlg). */
+html[data-layout="active"] {
+  --a-navy: #172c5f;
+  --a-royal: #5261ac;
+  --a-purple: #7c5cbf;
+  --a-purple-deep: #6c35b5;
+  --a-magenta: #ec1f8f;
+  --a-magenta-hover: #d0187e;
+  --a-orange: #f26038;
+  --a-lime: #b6d433;
+  --a-yellow: #ffc215;
+  --a-teal: #69c8c6;
+  --a-teal-deep: #3aa8a6;
+  --a-mint: #69c8c6;
+  --a-mint-soft: #d2fefe;
+  --a-lavender: #a2b6df;
+  --a-ink: #172c5f;
+  --a-white: #ffffff;
+  --a-line: rgba(23, 44, 95, 0.12);
+}
+
+html[data-layout="active"] body {
+  background: var(--a-white);
+  color: var(--a-ink);
+  font-family: var(--font-active-sans), var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Let section wrappers own heading colour (navy on light, white on dark). */
+html[data-layout="active"] h1,
+html[data-layout="active"] h2,
+html[data-layout="active"] h3,
+html[data-layout="active"] h4 {
+  color: inherit;
+}
+
+@layer utilities {
+  .active-container {
+    width: min(100% - 2rem, 72rem);
+    margin-inline: auto;
+  }
+
+  .active-display {
+    font-family: var(--font-active-sans), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+
+  .active-serif {
+    font-family: var(--font-active-serif), ui-serif, Georgia, serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+  }
+
+  .active-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.7rem 1.5rem;
+    border-radius: 0.35rem;
+    background: var(--a-magenta);
+    color: var(--a-white);
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: background 0.2s ease;
+  }
+
+  .active-btn:hover {
+    background: var(--a-magenta-hover);
+  }
+
+  .active-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.65rem 1.4rem;
+    border-radius: 0.35rem;
+    border: 2px solid var(--a-magenta);
+    color: var(--a-white);
+    background: transparent;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .active-btn-outline:hover {
+    background: var(--a-magenta);
+    color: var(--a-white);
+  }
+
+  .active-btn-orange {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.4rem;
+    border-radius: 0.35rem;
+    background: var(--a-orange);
+    color: var(--a-white);
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: filter 0.2s ease;
+  }
+
+  .active-btn-orange:hover {
+    filter: brightness(1.06);
+  }
+
+  html[data-layout="active"] .active-main {
+    background: var(--a-white);
+    color: var(--a-ink);
+  }
+
+  html[data-layout="active"] .active-form input,
+  html[data-layout="active"] .active-form textarea {
+    border-radius: 0.35rem;
+    border-color: var(--a-line);
+    background: var(--a-white);
+    color: var(--a-ink);
+  }
+
+  html[data-layout="active"] .active-form label {
+    color: var(--a-ink);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  html[data-layout="active"] .active-form button[type="submit"] {
+    background: var(--a-magenta);
+    color: var(--a-white);
+    border-radius: 0.35rem;
+    box-shadow: none;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  html[data-layout="active"] .active-form button[type="submit"]:hover:not(:disabled) {
+    background: var(--a-magenta-hover);
+  }
+}
+
+
+/* ==========================================================================
+   Pulse layout — high-energy athletic brand:
+   neon lime accents, translucent charcoal panels, full-bleed video hero,
+   stacked-panel navigation.
+   ========================================================================== */
+html[data-layout="pulse"] {
+  --p-black: #000000;
+  --p-ink: #0b0b0b;
+  /* Translucent charcoal — cards & secondary surfaces */
+  --p-panel: rgba(120, 120, 120, 0.28);
+  --p-panel-deep: rgba(30, 30, 30, 0.42);
+  --p-secondary: rgba(150, 150, 150, 0.34);
+  --p-white: #ffffff;
+  /* Neon spring green — Les Mills–style CTA accent */
+  --p-accent: #13ff72;
+  --p-accent-hover: #ffffff;
+  --p-accent-glow: rgba(19, 255, 114, 0.45);
+  --p-accent-soft: rgba(19, 255, 114, 0.14);
+  --p-on-accent: #0b0b0b;
+  --p-dim: rgba(255, 255, 255, 0.62);
+  --p-line: rgba(255, 255, 255, 0.14);
+}
+
+html[data-layout="pulse"] body {
+  background: var(--p-black);
+  color: var(--p-white);
+  font-family: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+}
+
+html[data-layout="pulse"] h1,
+html[data-layout="pulse"] h2,
+html[data-layout="pulse"] h3,
+html[data-layout="pulse"] h4 {
+  color: inherit;
+}
+
+@layer utilities {
+  .pulse-container {
+    width: min(100% - 2.5rem, 86rem);
+    margin-inline: auto;
+  }
+
+  .pulse-display {
+    font-family: var(--font-bebas), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    line-height: 0.9;
+  }
+
+  .pulse-eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+  }
+
+  .pulse-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.7rem 1.5rem;
+    border-radius: 999px;
+    background: var(--p-accent);
+    color: var(--p-on-accent);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .pulse-btn:hover {
+    background: #ffffff;
+    color: var(--p-on-accent);
+  }
+
+  .pulse-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.7rem 1.5rem;
+    border-radius: 0.35rem;
+    background: var(--p-panel);
+    color: var(--p-white);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: background 0.2s ease;
+  }
+
+  .pulse-btn-secondary:hover {
+    background: var(--p-secondary);
+  }
+
+  .pulse-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.7rem 1.5rem;
+    border-radius: 0.35rem;
+    border: 1.5px solid rgba(255, 255, 255, 0.55);
+    color: var(--p-white);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .pulse-btn-ghost:hover {
+    border-color: var(--p-white);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .pulse-underline-link {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding-bottom: 0.2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.85);
+    color: var(--p-white);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .pulse-underline-link:hover {
+    color: var(--p-accent);
+    border-color: var(--p-accent);
+  }
+
+  /* Snapshot-style accent: highlight key words / featured titles */
+  .pulse-accent-text {
+    color: var(--p-accent);
+  }
+
+  /* Snapshot-style featured card: soft neon edge glow */
+  .pulse-accent-card {
+    background: color-mix(in srgb, var(--p-accent-soft) 55%, rgba(12, 12, 12, 0.88));
+    border: 1px solid color-mix(in srgb, var(--p-accent) 55%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--p-accent) 25%, transparent),
+      0 0 28px var(--p-accent-glow),
+      inset 0 1px 0 color-mix(in srgb, var(--p-accent) 22%, transparent);
+  }
+
+  .pulse-card {
+    background: var(--p-panel);
+    color: var(--p-white);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* Stacked nav cards — translucent glass with soft / feathered edges */
+  .pulse-stack-card {
+    position: relative;
+    background: var(--p-panel);
+    color: var(--p-white);
+    border: 0;
+    border-radius: 0.85rem;
+    backdrop-filter: blur(22px) saturate(1.1);
+    -webkit-backdrop-filter: blur(22px) saturate(1.1);
+    box-shadow:
+      -14px 0 36px rgba(0, 0, 0, 0.28),
+      10px 0 28px rgba(0, 0, 0, 0.12),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    /* Soften left/right seams so boundaries aren't hard lines */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 14px,
+      #000 calc(100% - 14px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 14px,
+      #000 calc(100% - 14px),
+      transparent 100%
+    );
+  }
+
+  .pulse-stack-card-active {
+    background: #0a0a0a;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    /* Solid photo cards — no feathered/translucent edges on the image */
+    -webkit-mask-image: none;
+    mask-image: none;
+    box-shadow:
+      -18px 0 44px rgba(0, 0, 0, 0.45),
+      12px 0 32px rgba(0, 0, 0, 0.2),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+
+  .pulse-stack-card-mobile {
+    position: relative;
+    background: var(--p-panel);
+    color: var(--p-white);
+    border: 0;
+    border-radius: 1rem;
+    backdrop-filter: blur(22px) saturate(1.1);
+    -webkit-backdrop-filter: blur(22px) saturate(1.1);
+    box-shadow:
+      0 10px 36px rgba(0, 0, 0, 0.28),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 12px,
+      #000 calc(100% - 12px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 12px,
+      #000 calc(100% - 12px),
+      transparent 100%
+    );
+  }
+
+  /* Post-hero ZZZ reveal */
+  .pulse-zzz-letter {
+    position: relative;
+    width: 100%;
+    height: clamp(7rem, 15vw, 10rem);
+    min-width: 0;
+    flex: 1 1 0;
+    perspective: 900px;
+    filter: drop-shadow(0 14px 12px rgba(0, 0, 0, 0.48));
+  }
+
+  .pulse-zzz-letter-vertical {
+    width: clamp(6rem, 12vw, 8rem);
+    height: clamp(5rem, 10vw, 6.75rem);
+    flex: 0 0 clamp(6rem, 12vw, 8rem);
+  }
+
+  .pulse-zzz-card {
+    background: var(--p-panel);
+    border: 0;
+    border-radius: 0.85rem;
+    box-shadow:
+      -14px 0 36px rgba(0, 0, 0, 0.28),
+      10px 0 28px rgba(0, 0, 0, 0.12),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(22px) saturate(1.1);
+    -webkit-backdrop-filter: blur(22px) saturate(1.1);
+    transform-origin: left center;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 14px,
+      #000 calc(100% - 14px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 14px,
+      #000 calc(100% - 14px),
+      transparent 100%
+    );
+  }
+
+  .pulse-zzz-row {
+    transform-origin: left center;
+  }
+
+  .pulse-zzz-name {
+    font-family: var(--font-bebas), ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: 0.025em;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .pulse-zzz-description {
+    max-width: 42rem;
+    font-size: clamp(0.95rem, 1.35vw, 1.2rem);
+    font-style: italic;
+    line-height: 1.45;
+  }
+
+  html[data-layout="pulse"] .pulse-main {
+    background: var(--p-black);
+    color: var(--p-white);
   }
 }

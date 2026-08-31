@@ -4,7 +4,8 @@ import { CtaBand } from "@/components/shared/cta-band";
 import { FeatureCard } from "@/components/shared/feature-card";
 import { PageHero } from "@/components/shared/page-hero";
 import { Reveal } from "@/components/shared/reveal";
-import { PremiumHowItWorksPage } from "@/components/premium-coaching-layout/pages/premium-how-it-works-page";
+import { ActiveHowItWorksPage } from "@/components/active-layout/pages/active-how-it-works-page";
+import { PulseHowItWorksPage } from "@/components/pulse-layout/pages/pulse-how-it-works-page";
 import { StudioHowItWorksPage } from "@/components/studio-layout/pages/studio-how-it-works-page";
 import { MultiLayoutPage } from "@/components/theme/multi-layout-page";
 import { approachPillars, processSteps } from "@/content/site";
@@ -20,8 +21,9 @@ export default function HowItWorksPage() {
   return (
     <MultiLayoutPage
       original={<OriginalHowItWorksPage />}
-      premium={<PremiumHowItWorksPage />}
       studio={<StudioHowItWorksPage />}
+      active={<ActiveHowItWorksPage />}
+      pulse={<PulseHowItWorksPage />}
     />
   );
 }
