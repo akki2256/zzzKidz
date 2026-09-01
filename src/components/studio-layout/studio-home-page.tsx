@@ -7,6 +7,7 @@ import { StudioPromiseBand } from "@/components/studio-layout/studio-promise-ban
 import { StudioPromoTiles } from "@/components/studio-layout/studio-promo-tiles";
 import { StudioStatement } from "@/components/studio-layout/studio-statement";
 import { StudioStatsBand } from "@/components/studio-layout/studio-stats-band";
+import { HeroRibbon } from "@/components/shared/hero-ribbon";
 
 /**
  * Editorial flow: full-bleed hero → statement → promo tiles → program cards →
@@ -16,6 +17,7 @@ export function StudioHomePage() {
   return (
     <>
       <StudioHero />
+      <HeroRibbon />
       <StudioStatement />
       <StudioPromoTiles />
       <StudioProgramCards />
