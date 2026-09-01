@@ -25,8 +25,6 @@ const PulseZzzGateContext = createContext<PulseZzzGateContextValue | null>(null)
 const HERO_ID = "pulse-hero-chapter";
 const ZZZ_ID = "pulse-after-hero";
 const HERO_SCROLL_THRESHOLD = 12;
-const ALIGN_PX = 16;
-const GESTURE_THRESHOLD = 18;
 const SNAP_DURATION = 0.85;
 
 export function usePulseZzzGate() {
@@ -41,27 +39,9 @@ function setZzzLock(locked: boolean) {
   document.documentElement.dataset.pulseZzzLock = locked ? "true" : "false";
 }
 
-function setChapterLock(locked: boolean) {
-  document.documentElement.dataset.pulseOutcomesLock = locked ? "true" : "false";
-}
-
-function consumeGesture(event: WheelEvent | TouchEvent) {
-  (event as WheelEvent & { lenisStopPropagation?: boolean }).lenisStopPropagation = true;
-  if (event.cancelable) event.preventDefault();
-}
-
-function isAligned(id: string) {
-  const el = document.getElementById(id);
-  if (!el) return false;
-  return Math.abs(el.getBoundingClientRect().top) <= ALIGN_PX;
-}
-
-const snapEase = (t: number) => (t === 1 ? 1 : 1 - 2 ** (-10 * t));
-
 /**
- * Hero ↔ ZZZ is a discrete chapter step.
- * First downward visit plays the reveal and locks until it finishes.
- * After that, up/down snaps fully between hero and the completed ZZZ screen.
+ * First downward visit from the hero plays the ZZZ reveal and locks until it finishes.
+ * After that, scroll is free — no chapter snaps, so the homepage does not page like a PDF.
  */
 export function PulseZzzGateProvider({ children }: { children: ReactNode }) {
   const lenis = useLenis();
@@ -71,7 +51,6 @@ export function PulseZzzGateProvider({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<PulseZzzPhase>("idle");
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
-  const snappingRef = useRef(false);
 
   const markComplete = useCallback(() => {
     if (phaseRef.current === "complete") return;
@@ -102,27 +81,15 @@ export function PulseZzzGateProvider({ children }: { children: ReactNode }) {
     return true;
   }, []);
 
-  const snapToChapter = useCallback((id: string) => {
+  const scrollToChapter = useCallback((id: string) => {
     const instance = lenisRef.current;
     const target = document.getElementById(id);
-    if (!instance || !target || snappingRef.current) return;
-
-    snappingRef.current = true;
-    setChapterLock(true);
-    const unlock = () => {
-      snappingRef.current = false;
-      setChapterLock(false);
-    };
-    window.setTimeout(() => {
-      if (snappingRef.current) unlock();
-    }, SNAP_DURATION * 1000 + 280);
+    if (!instance || !target) return;
     instance.scrollTo(target, {
       offset: 0,
       duration: SNAP_DURATION,
-      easing: snapEase,
-      lock: true,
+      easing: (t) => (t === 1 ? 1 : 1 - 2 ** (-10 * t)),
       force: true,
-      onComplete: unlock,
     });
   }, []);
 
@@ -149,58 +116,19 @@ export function PulseZzzGateProvider({ children }: { children: ReactNode }) {
 
     const isOnHero = () => instance.scroll <= HERO_SCROLL_THRESHOLD;
 
-    const onVirtualScroll = ({ deltaY, event }: VirtualScrollData) => {
+    const onVirtualScroll = ({ deltaY }: VirtualScrollData) => {
       if (document.documentElement.dataset.pulseMenuOpen === "true") return;
-
-      if (phaseRef.current === "idle") {
-        if (!isOnHero() || deltaY <= 0) return;
-        beginZzzSequence();
-        return;
-      }
-
-      if (phaseRef.current !== "complete") return;
-      if (document.documentElement.dataset.pulseZzzLock === "true") return;
-
-      const onHero = isOnHero() || isAligned(HERO_ID);
-      const onZzz = isAligned(ZZZ_ID);
-      const zzzEl = document.getElementById(ZZZ_ID);
-      const zzzTop = zzzEl?.getBoundingClientRect().top ?? 0;
-      const halfBetween =
-        zzzTop > ALIGN_PX && zzzTop < window.innerHeight * 0.88;
-
-      if (!onHero && !onZzz && !halfBetween) return;
-      if (onZzz && deltaY > 0) return;
-
-      if (deltaY > 0 && (onHero || halfBetween)) {
-        consumeGesture(event);
-        if (snappingRef.current || Math.abs(deltaY) < GESTURE_THRESHOLD) return;
-        snapToChapter(ZZZ_ID);
-        return;
-      }
-
-      if (deltaY < 0 && (onZzz || halfBetween)) {
-        consumeGesture(event);
-        if (snappingRef.current || Math.abs(deltaY) < GESTURE_THRESHOLD) return;
-        snapToChapter(HERO_ID);
-      }
+      if (phaseRef.current !== "idle") return;
+      if (!isOnHero() || deltaY <= 0) return;
+      beginZzzSequence();
     };
 
     const onScroll = () => {
-      if (phaseRef.current === "idle") {
-        if (instance.scroll <= HERO_SCROLL_THRESHOLD) return;
-        const heroEl = document.getElementById(HERO_ID);
-        if (heroEl && instance.scroll < heroEl.offsetHeight) {
-          beginZzzSequence();
-        }
-        return;
-      }
-
-      if (phaseRef.current !== "complete" || snappingRef.current) return;
-      const zzzEl = document.getElementById(ZZZ_ID);
-      if (!zzzEl) return;
-      const top = zzzEl.getBoundingClientRect().top;
-      if (top > ALIGN_PX && top < window.innerHeight * 0.72 && instance.direction < 0) {
-        snapToChapter(HERO_ID);
+      if (phaseRef.current !== "idle") return;
+      if (instance.scroll <= HERO_SCROLL_THRESHOLD) return;
+      const heroEl = document.getElementById(HERO_ID);
+      if (heroEl && instance.scroll < heroEl.offsetHeight) {
+        beginZzzSequence();
       }
     };
 
@@ -211,7 +139,7 @@ export function PulseZzzGateProvider({ children }: { children: ReactNode }) {
       if (!link) return;
       event.preventDefault();
       if (phaseRef.current === "idle") beginZzzSequence();
-      else if (phaseRef.current === "complete") snapToChapter(ZZZ_ID);
+      else if (phaseRef.current === "complete") scrollToChapter(ZZZ_ID);
     };
 
     instance.on("virtual-scroll", onVirtualScroll);
@@ -223,9 +151,8 @@ export function PulseZzzGateProvider({ children }: { children: ReactNode }) {
       instance.off("scroll", onScroll);
       window.removeEventListener("click", onAnchorClick, { capture: true });
       setZzzLock(false);
-      setChapterLock(false);
     };
-  }, [lenis, beginZzzSequence, snapToChapter]);
+  }, [lenis, beginZzzSequence, scrollToChapter]);
 
   return (
     <PulseZzzGateContext.Provider value={{ phase, beginZzzSequence, markComplete }}>

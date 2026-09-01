@@ -1102,36 +1102,16 @@ html[data-layout="pulse"] h4 {
     color: var(--p-white);
   }
 
-  /* Homepage chapter scroll — snap at section boundaries, free scroll inside sticky runways */
-  html[data-layout="pulse"]:has(.pulse-home-scroll) {
-    scroll-snap-type: y proximity;
-  }
-
-  /** Lenis smooth scroll replaces native snap to avoid fighting inertial scroll. */
-  html.lenis[data-layout="pulse"]:has(.pulse-home-scroll) {
-    scroll-snap-type: none;
-  }
-
   html.lenis.lenis-smooth {
     scroll-behavior: auto !important;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    html[data-layout="pulse"]:has(.pulse-home-scroll) {
-      scroll-snap-type: none;
-    }
-  }
-
   .pulse-snap-start {
-    scroll-snap-align: start;
-    scroll-snap-stop: normal;
+    scroll-snap-align: none;
   }
 
-  /** Full-viewport chapter — hero, ZZZ reveal, etc. */
   .pulse-snap-chapter {
     height: 100svh;
     max-height: 100svh;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
   }
 }

@@ -3,8 +3,6 @@
 import { ReactLenis, useLenis } from "lenis/react";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
-import { PulseHomeSectionSnap } from "@/components/pulse-layout/pulse-home-section-snap";
-import { PulseOutcomesStepController } from "@/components/pulse-layout/pulse-outcomes-step";
 import { PulseZzzGateProvider } from "@/components/pulse-layout/pulse-zzz-gate";
 
 type PulseHomeScrollRootProps = {
@@ -46,18 +44,15 @@ export function PulseHomeScrollRoot({ children }: PulseHomeScrollRootProps) {
     <ReactLenis
       root
       options={{
-        /** Same ballpark as Julian Fella portfolio sites */
-        lerp: 0.1,
+        lerp: 0.085,
         smoothWheel: true,
-        wheelMultiplier: 1,
-        touchMultiplier: 1.65,
+        wheelMultiplier: 1.15,
+        touchMultiplier: 1.8,
         syncTouch: true,
       }}
     >
       <PulseZzzGateProvider>
         <LenisMenuSync />
-        <PulseHomeSectionSnap />
-        <PulseOutcomesStepController />
         {children}
       </PulseZzzGateProvider>
     </ReactLenis>
