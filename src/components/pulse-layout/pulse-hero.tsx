@@ -20,7 +20,10 @@ export function PulseHero() {
   const poster = heroSlides[0];
 
   return (
-    <section className="relative isolate flex min-h-[100svh] items-end overflow-hidden bg-black">
+    <div
+      className="relative isolate flex min-h-0 flex-1 items-end overflow-hidden bg-black"
+      aria-label="Triple Z Kids Move Lab hero"
+    >
       {reduceMotion ? (
         <Image
           src={poster.src}
@@ -96,6 +99,6 @@ export function PulseHero() {
           </a>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

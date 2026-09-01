@@ -144,9 +144,9 @@ export const peComparison = {
   traditional: {
     title: "Traditional P.E.",
     points: [
-      { title: "Limited Activities", description: "Repetitive routines." },
-      { title: "Low Engagement", description: "Children lose interest." },
-      { title: "No Skill Progression", description: "Lack of structure." },
+      { title: "Limited Activities", description: "The same games and drills, repeated every week." },
+      { title: "Low Engagement", description: "Children lose interest when sessions feel predictable." },
+      { title: "No Skill Progression", description: "No clear path to build skill, strength or coordination." },
       { title: "No Lasting Impact", description: "Doesn't build lasting fitness or confidence." },
     ],
   },

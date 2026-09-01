@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { usePulseZzzGate } from "@/components/pulse-layout/pulse-zzz-gate";
 import { easeOutExpo, springSoft } from "@/lib/motion";
 import { mediaPath } from "@/lib/media";
 
@@ -33,102 +34,119 @@ const zzzMeanings = [
   },
 ] as const;
 
-const zSlideDuration = 1.35;
-const zSlideStagger = 0.52;
-const cardRevealDuration = 2.45;
+const zSlideDuration = 1.05;
+const zSlideStagger = 0.38;
+/** ms after vertical stack before cards + preview image are shown and scroll unlocks */
+const zUnlockDelayMs = 1800;
 
 /**
  * Post-hero ZZZ story: the three marks enter from right to left, stack vertically,
  * then open into the meaning of each Z.
  */
 export function PulseZzzReveal() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const inView = useInView(sectionRef, { once: true, amount: 0.35 });
+  const { phase, markComplete } = usePulseZzzGate();
   const reduceMotion = useReducedMotion();
-  const [vertical, setVertical] = useState(Boolean(reduceMotion));
-  const [cardsReady, setCardsReady] = useState(Boolean(reduceMotion));
+  const started = phase !== "idle";
+  const [vertical, setVertical] = useState(Boolean(reduceMotion || phase === "complete"));
+  const [cardsReady, setCardsReady] = useState(Boolean(reduceMotion || phase === "complete"));
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!inView || reduceMotion) return;
-    // Let the final Z complete its long slide before changing orientation.
-    const timer = window.setTimeout(() => setVertical(true), 3300);
-    return () => window.clearTimeout(timer);
-  }, [inView, reduceMotion]);
+    if (phase === "complete") {
+      setVertical(true);
+      setCardsReady(true);
+    }
+  }, [phase]);
 
   useEffect(() => {
-    if (!vertical || reduceMotion) return;
-
-    const timer = window.setTimeout(() => setCardsReady(true), cardRevealDuration * 1000);
+    if (!started || reduceMotion || phase === "complete") return;
+    const timer = window.setTimeout(() => setVertical(true), 2400);
     return () => window.clearTimeout(timer);
-  }, [vertical, reduceMotion]);
+  }, [started, reduceMotion, phase]);
+
+  useEffect(() => {
+    if (!vertical || reduceMotion || phase !== "playing") return;
+
+    const timer = window.setTimeout(() => {
+      setCardsReady(true);
+      markComplete();
+    }, zUnlockDelayMs);
+
+    return () => window.clearTimeout(timer);
+  }, [vertical, reduceMotion, phase, markComplete]);
 
   const previewIndex = cardsReady ? hoveredIndex ?? 0 : null;
   const previewMeaning = previewIndex === null ? undefined : zzzMeanings[previewIndex];
 
   return (
     <section
-      ref={sectionRef}
       id="pulse-after-hero"
-      className="relative overflow-hidden border-b border-white/10 bg-[#080808] pb-16 pt-2 sm:pb-24 sm:pt-3"
+      data-pulse-snap
+      data-pulse-snap-type="chapter"
+      className="pulse-snap-chapter relative flex h-[100svh] max-h-[100svh] flex-col justify-center overflow-hidden border-b border-white/10 bg-[#080808]"
       aria-label="ZZZ movement programmes"
     >
-      <div className="pulse-container">
-        <div className="grid gap-12">
-          <div className="relative flex min-h-[18rem] flex-col items-start justify-start pt-0 sm:min-h-[22rem] sm:pt-0 lg:min-h-0">
-            <div
-              aria-hidden
-              className="absolute h-64 w-64 rounded-full bg-[var(--p-accent)]/10 blur-3xl sm:h-80 sm:w-80"
-            />
+      <div className="pulse-container flex w-full flex-1 flex-col justify-center py-8 sm:py-10">
+        <div
+          className={
+            vertical && cardsReady
+              ? "relative grid w-full min-h-[min(72svh,36rem)] grid-cols-1 items-stretch lg:h-[min(68svh,40rem)] lg:min-h-0 lg:grid-cols-[minmax(0,58%)_minmax(0,42%)] lg:gap-8"
+              : "relative flex w-full min-h-[min(72svh,36rem)] flex-col items-start justify-center lg:min-h-[min(68svh,40rem)]"
+          }
+        >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-0 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-[var(--p-accent)]/10 blur-3xl sm:h-80 sm:w-80"
+          />
 
-            <motion.div
-              layout
-              className={
-                vertical
-                  ? "pulse-zzz-stage relative flex w-full max-w-3xl flex-col items-start gap-3 lg:max-w-[58%]"
-                  : "pulse-zzz-stage relative flex w-full items-stretch gap-2 sm:gap-3"
-              }
-              transition={{ layout: springSoft }}
-              aria-label="ZZZ movement marks"
-            >
-              {zzzMeanings.map((item, index) => (
-                <motion.div
-                  key={`${item.name}-${index}`}
-                  layout
-                  initial={reduceMotion ? false : { x: "100vw", opacity: 0 }}
-                  animate={{
-                    x: reduceMotion || inView ? 0 : "100vw",
-                    opacity: reduceMotion || inView ? 1 : 0,
-                  }}
-                  transition={{
-                    x: {
-                      duration: zSlideDuration,
-                      delay: reduceMotion ? 0 : (2 - index) * zSlideStagger,
-                      ease: easeOutExpo,
-                    },
-                    opacity: {
-                      duration: 0.45,
-                      delay: reduceMotion ? 0 : (2 - index) * zSlideStagger,
-                      ease: easeOutExpo,
-                    },
-                    layout: springSoft,
-                  }}
-                  className={
-                    vertical
-                      ? "relative flex w-full items-center gap-2 sm:gap-4"
-                      : "relative flex-1"
-                  }
-                >
+          <motion.div
+            layout
+            className={
+              vertical
+                ? "pulse-zzz-stage relative z-[1] flex h-full w-full flex-col items-stretch gap-3"
+                : "pulse-zzz-stage relative flex w-full items-stretch gap-2 sm:gap-3"
+            }
+            transition={{ layout: springSoft }}
+            aria-label="ZZZ movement marks"
+          >
+            {zzzMeanings.map((item, index) => (
+              <motion.div
+                key={`${item.name}-${index}`}
+                layout
+                initial={reduceMotion ? false : { x: "100vw", opacity: 0 }}
+                animate={{
+                  x: reduceMotion || started ? 0 : "100vw",
+                  opacity: reduceMotion || started ? 1 : 0,
+                }}
+                transition={{
+                  x: {
+                    duration: zSlideDuration,
+                    delay: reduceMotion ? 0 : (2 - index) * zSlideStagger,
+                    ease: easeOutExpo,
+                  },
+                  opacity: {
+                    duration: 0.45,
+                    delay: reduceMotion ? 0 : (2 - index) * zSlideStagger,
+                    ease: easeOutExpo,
+                  },
+                  layout: springSoft,
+                }}
+                className={
+                  vertical
+                    ? "relative flex min-h-0 w-full flex-1 items-stretch gap-2 sm:gap-4"
+                    : "relative flex-1"
+                }
+              >
                   <motion.div
                     layout
                     animate={{ rotateY: vertical ? [0, 90, 0] : 0 }}
                     transition={{
                       layout: springSoft,
-                      rotateY: { duration: 0.82, delay: 0, ease: easeOutExpo },
+                      rotateY: { duration: 0.68, delay: 0, ease: easeOutExpo },
                     }}
                     className={
                       vertical
-                        ? "pulse-zzz-letter pulse-zzz-letter-vertical will-change-transform"
+                        ? "pulse-zzz-letter pulse-zzz-letter-vertical shrink-0 self-center will-change-transform"
                         : "pulse-zzz-letter will-change-transform"
                     }
                   >
@@ -145,7 +163,7 @@ export function PulseZzzReveal() {
                     {vertical ? (
                       <motion.div
                         layout
-                        className="pulse-zzz-card relative min-w-0 flex-1 overflow-hidden"
+                        className="pulse-zzz-card relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
                         initial={reduceMotion ? false : { opacity: 0, x: -70, scaleX: 0.08 }}
                         animate={{ opacity: 1, x: 0, scaleX: 1 }}
                         exit={reduceMotion ? undefined : { opacity: 0, x: -30 }}
@@ -157,14 +175,14 @@ export function PulseZzzReveal() {
                         onFocus={() => setHoveredIndex(index)}
                         onBlur={() => setHoveredIndex(null)}
                         transition={{
-                          duration: 0.8,
-                          delay: reduceMotion ? 0 : 0.35 + index * 0.55,
+                          duration: 0.65,
+                          delay: reduceMotion ? 0 : 0.28 + index * 0.42,
                           ease: easeOutExpo,
                           layout: springSoft,
                         }}
                       >
                         <motion.div
-                          className="pulse-zzz-row flex h-full gap-4 px-4 py-4 sm:px-5 sm:py-5"
+                          className="pulse-zzz-row flex h-full min-h-0 flex-1 items-center gap-4 px-4 py-4 sm:px-5 sm:py-5"
                           initial={reduceMotion ? false : { opacity: 0, x: -24 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{
@@ -193,14 +211,14 @@ export function PulseZzzReveal() {
               {previewMeaning ? (
                 <motion.div
                   key={previewMeaning.name}
-                  className="pointer-events-none absolute inset-y-0 -right-10 hidden w-[calc(42%+2.5rem)] lg:block"
+                  className="relative z-[1] hidden min-h-0 lg:flex"
                   initial={reduceMotion ? false : { opacity: 0, x: 28, scale: 0.96 }}
                   animate={{ opacity: 1, x: 0, scale: 1 }}
                   exit={reduceMotion ? undefined : { opacity: 0, x: -18, scale: 0.98 }}
                   transition={{ duration: 0.55, ease: easeOutExpo }}
                   aria-live="polite"
                 >
-                  <div className="pulse-zzz-preview relative h-full overflow-hidden bg-[#080808]">
+                  <div className="pulse-zzz-preview relative h-full w-full overflow-hidden bg-[#080808]">
                     <Image
                       src={previewMeaning.image}
                       alt={previewMeaning.imageAlt}
@@ -224,7 +242,6 @@ export function PulseZzzReveal() {
                 </motion.div>
               ) : null}
             </AnimatePresence>
-          </div>
         </div>
       </div>
     </section>

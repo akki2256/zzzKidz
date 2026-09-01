@@ -998,6 +998,62 @@ html[data-layout="pulse"] h4 {
     outline-offset: 3px;
   }
 
+  /** PE comparison tiles — color reveal + accent draw, no lift */
+  .pulse-pe-card {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    background: #ffffff;
+    isolation: isolate;
+  }
+
+  .pulse-pe-card::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 4;
+    width: 100%;
+    height: 3px;
+    pointer-events: none;
+    background: var(--p-accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .pulse-pe-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 0 transparent;
+    transition: box-shadow 0.45s ease;
+  }
+
+  .pulse-pe-card:hover::after,
+  .pulse-pe-card:focus-within::after {
+    transform: scaleX(1);
+  }
+
+  .pulse-pe-card:hover::before,
+  .pulse-pe-card:focus-within::before {
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--p-accent) 70%, #0b0b0b);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-pe-card::after,
+    .pulse-pe-card::before {
+      transition: none;
+    }
+
+    .pulse-pe-card:hover::after,
+    .pulse-pe-card:focus-within::after {
+      transform: none;
+    }
+  }
+
   .pulse-zzz-preview::after {
     position: absolute;
     inset: 0;
@@ -1044,5 +1100,38 @@ html[data-layout="pulse"] h4 {
   html[data-layout="pulse"] .pulse-main {
     background: var(--p-black);
     color: var(--p-white);
+  }
+
+  /* Homepage chapter scroll — snap at section boundaries, free scroll inside sticky runways */
+  html[data-layout="pulse"]:has(.pulse-home-scroll) {
+    scroll-snap-type: y proximity;
+  }
+
+  /** Lenis smooth scroll replaces native snap to avoid fighting inertial scroll. */
+  html.lenis[data-layout="pulse"]:has(.pulse-home-scroll) {
+    scroll-snap-type: none;
+  }
+
+  html.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html[data-layout="pulse"]:has(.pulse-home-scroll) {
+      scroll-snap-type: none;
+    }
+  }
+
+  .pulse-snap-start {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
+  }
+
+  /** Full-viewport chapter — hero, ZZZ reveal, etc. */
+  .pulse-snap-chapter {
+    height: 100svh;
+    max-height: 100svh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 }

@@ -28,6 +28,13 @@ export function PulseHeader({ overlay = true }: PulseHeaderProps) {
   }
 
   useEffect(() => {
+    document.documentElement.dataset.pulseMenuOpen = open ? "true" : "false";
+    return () => {
+      delete document.documentElement.dataset.pulseMenuOpen;
+    };
+  }, [open]);
+
+  useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";

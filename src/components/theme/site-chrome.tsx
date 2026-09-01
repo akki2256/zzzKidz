@@ -40,9 +40,9 @@ export function SiteChrome({ children }: SiteChromeProps) {
 
   if (layout === "pulse") {
     return (
-      <div className="flex min-h-full flex-1 flex-col overflow-x-hidden bg-black">
+      <div className="flex min-h-full flex-1 flex-col bg-black">
         <PulseHeader />
-        <main className="pulse-main flex-1 overflow-x-hidden">{children}</main>
+        <main className="pulse-main flex-1">{children}</main>
         <PulseFooter />
       </div>
     );

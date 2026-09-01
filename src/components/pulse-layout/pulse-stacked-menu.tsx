@@ -51,6 +51,7 @@ export function PulseStackedMenu({ open, onClose }: PulseStackedMenuProps) {
       {open ? (
         <motion.div
           className="fixed inset-0 z-[200] flex flex-col bg-[var(--p-panel-deep)] text-white backdrop-blur-2xl"
+          data-lenis-prevent=""
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}

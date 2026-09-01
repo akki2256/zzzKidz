@@ -4,12 +4,15 @@ import Image from "next/image";
 import {
   motion,
   useReducedMotion,
-  useScroll,
   useTransform,
   type MotionValue,
 } from "framer-motion";
 import { useRef } from "react";
-import { PULSE_HERO_VIDEO } from "@/content/pulse-nav";
+import { usePulseSmoothScrollProgress } from "@/hooks/use-pulse-smooth-scroll-progress";
+import {
+  PULSE_SCROLL_PER_ITEM_VH,
+  pulseSectionHeightVh,
+} from "@/lib/pulse-scroll";
 
 type Outcome = {
   title: string;
@@ -51,8 +54,8 @@ const outcomes: Outcome[] = [
   },
 ];
 
-/** Scroll runway per card — controls how much page scroll each reveal needs. */
-const SCROLL_PER_CARD_VH = 60;
+const SCROLL_RUNWAY_VH =
+  Math.max(outcomes.length - 1, 1) * PULSE_SCROLL_PER_ITEM_VH;
 
 type OutcomeColumnProps = {
   outcome: Outcome;
@@ -62,9 +65,9 @@ type OutcomeColumnProps = {
 
 function OutcomeColumn({ outcome, index, progress }: OutcomeColumnProps) {
   const reduceMotion = useReducedMotion();
-  const step = 1 / outcomes.length;
-  const enterStart = index * step;
-  const enterEnd = Math.min(enterStart + step * 0.9, 1);
+  const step = 1 / Math.max(outcomes.length - 1, 1);
+  const enterStart = Math.max(0, (index - 1) * step);
+  const enterEnd = index * step;
 
   const top = useTransform(
     progress,
@@ -73,7 +76,7 @@ function OutcomeColumn({ outcome, index, progress }: OutcomeColumnProps) {
   );
   const opacity = useTransform(
     progress,
-    index === 0 ? [0, 1] : [enterStart, enterStart + step * 0.35],
+    index === 0 ? [0, 1] : [enterStart, enterEnd],
     index === 0 ? [1, 1] : [0, 1],
   );
 
@@ -84,7 +87,7 @@ function OutcomeColumn({ outcome, index, progress }: OutcomeColumnProps) {
         style={reduceMotion ? { top: 0, opacity: 1 } : { top, opacity }}
       >
         <article
-          className="group relative h-full overflow-hidden rounded-xl border border-white/15 bg-[#111313] shadow-[0_18px_50px_rgba(0,0,0,0.45)]"
+          className="group relative h-full overflow-hidden bg-[#111313]"
           aria-label={outcome.title}
         >
           <Image
@@ -117,32 +120,18 @@ function OutcomeColumn({ outcome, index, progress }: OutcomeColumnProps) {
 
 type OutcomesStageProps = {
   progress: MotionValue<number>;
-  showVideo?: boolean;
 };
 
-function OutcomesStage({ progress, showVideo = true }: OutcomesStageProps) {
+function OutcomesStage({ progress }: OutcomesStageProps) {
   return (
     <>
-      {showVideo ? (
-        <video
-          className="absolute inset-0 h-full w-full object-cover opacity-[0.18]"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-hidden
-        >
-          <source src={PULSE_HERO_VIDEO} type="video/mp4" />
-        </video>
-      ) : null}
       <div
         aria-hidden
         className="absolute inset-0 bg-[radial-gradient(circle_at_72%_42%,rgba(19,255,114,0.12),transparent_32%),linear-gradient(180deg,#070909_0%,rgba(7,9,9,0.76)_42%,#070909_100%)]"
       />
 
-      <div className="pulse-container relative flex h-full w-full flex-col justify-center py-12 sm:py-16">
-        <div className="grid h-[min(80.6svh,57.2rem)] min-h-[26rem] grid-cols-5 gap-1.5 sm:gap-2">
+      <div className="pulse-container relative flex h-full w-full flex-col justify-center py-4 sm:py-6">
+        <div className="grid h-[min(90svh,74.4rem)] min-h-[33.8rem] grid-cols-5 gap-1.5 sm:gap-2">
           {outcomes.map((outcome, index) => (
             <OutcomeColumn
               key={outcome.title}
@@ -166,30 +155,21 @@ function OutcomesStage({ progress, showVideo = true }: OutcomesStageProps) {
 export function PulseOutcomesScroll() {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
-  const scrollHeightVh = 100 + outcomes.length * SCROLL_PER_CARD_VH;
+  const scrollHeightVh = pulseSectionHeightVh(SCROLL_RUNWAY_VH);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
-
-  const pinPosition = useTransform(scrollYProgress, (value) => {
-    if (value <= 0) return "relative";
-    if (value >= 1) return "absolute";
-    return "fixed";
-  });
-  const pinTop = useTransform(scrollYProgress, (value) => (value >= 1 ? "auto" : 0));
-  const pinBottom = useTransform(scrollYProgress, (value) => (value >= 1 ? 0 : "auto"));
+  const scrollYProgress = usePulseSmoothScrollProgress(sectionRef);
 
   if (reduceMotion) {
     return (
       <section
         id="pulse-outcomes"
-        className="relative border-b border-white/10 bg-[#070909] py-16 sm:py-24"
+        className="pulse-snap-start relative border-b border-white/10 bg-[#070909] py-16 sm:py-24"
+        data-pulse-snap
+        data-pulse-snap-type="runway"
         aria-label="Movement outcomes"
       >
         <div className="relative flex min-h-[100svh] items-center">
-          <OutcomesStage progress={scrollYProgress} showVideo={false} />
+          <OutcomesStage progress={scrollYProgress} />
         </div>
       </section>
     );
@@ -199,20 +179,15 @@ export function PulseOutcomesScroll() {
     <section
       ref={sectionRef}
       id="pulse-outcomes"
-      className="relative border-b border-white/10 bg-[#070909]"
+      data-pulse-snap
+      data-pulse-snap-type="runway"
+      className="pulse-snap-start relative border-b border-white/10 bg-[#070909]"
       style={{ height: `${scrollHeightVh}vh` }}
       aria-label="Movement outcomes"
     >
-      <motion.div
-        className="inset-x-0 z-[5] flex h-[100svh] min-h-[36rem] w-full items-center bg-[#070909]"
-        style={{
-          position: pinPosition,
-          top: pinTop,
-          bottom: pinBottom,
-        }}
-      >
+      <div className="sticky top-0 z-[1] flex h-[100svh] min-h-[36rem] w-full items-center overflow-hidden bg-[#070909]">
         <OutcomesStage progress={scrollYProgress} />
-      </motion.div>
+      </div>
     </section>
   );
 }
