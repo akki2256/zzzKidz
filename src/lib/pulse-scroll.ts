@@ -60,14 +60,45 @@ export function pulseItemWindow(
   index: number,
   count: number,
 ): { enterStart: number; enterMid: number; enterEnd: number } {
-  const phaseSpan = phaseEnd - phaseStart;
-  const slot = phaseSpan / count;
+  const safeCount = Math.max(count, 1);
+  const phaseSpan = Math.max(phaseEnd - phaseStart, 0);
+  const slot = phaseSpan / safeCount;
   /** Start next item before the previous finishes — smoother cascade. */
   const overlap = 0.26;
-  const enterStart = phaseStart + index * slot * (1 - overlap);
-  const enterEnd = Math.min(enterStart + slot * 0.94, phaseEnd - slot * 0.04);
+  let enterStart = phaseStart + index * slot * (1 - overlap);
+  let enterEnd = Math.min(enterStart + slot * 0.94, phaseEnd - slot * 0.04);
+  if (enterEnd <= enterStart) {
+    enterEnd = Math.min(phaseEnd, enterStart + Math.max(slot * 0.25, 1e-4));
+  }
+  if (enterEnd <= enterStart) {
+    enterStart = Math.max(phaseStart, enterEnd - 1e-4);
+  }
   const enterMid = enterStart + (enterEnd - enterStart) * 0.52;
   return { enterStart, enterMid, enterEnd };
+}
+
+/**
+ * WAAPI keyframe offsets must be in [0, 1] and monotonically increasing.
+ * Use this for every scroll-linked useTransform input range.
+ */
+export function pulseKeyframeOffsets(values: number[]): number[] {
+  if (values.length === 0) return [0, 1];
+
+  const epsilon = 1e-4;
+  const lastIndex = values.length - 1;
+  const maxFirst = Math.max(0, 1 - epsilon * lastIndex);
+  let previous = Math.min(Math.max(values[0] ?? 0, 0), maxFirst);
+  const offsets = [previous];
+
+  for (let index = 1; index < values.length; index += 1) {
+    const remaining = lastIndex - index;
+    const ceiling = 1 - remaining * epsilon;
+    const next = Math.min(Math.max(values[index] ?? previous, previous + epsilon), ceiling);
+    offsets.push(next);
+    previous = next;
+  }
+
+  return offsets;
 }
 
 /** Fade window for full-screen transition beats. */

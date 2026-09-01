@@ -18,6 +18,7 @@ import {
   PULSE_PE_TITLE_VH,
   pulseBeatWindow,
   pulseItemWindow,
+  pulseKeyframeOffsets,
   pulsePhaseBounds,
   pulsePhaseFadeEdge,
   pulseSectionHeightVh,
@@ -160,12 +161,12 @@ function ComparisonColumn({
 
   const staggeredOpacity = useTransform(
     progress,
-    [phaseStart, enterStart, enterMid, enterEnd, phaseEnd],
+    pulseKeyframeOffsets([phaseStart, enterStart, enterMid, enterEnd, phaseEnd]),
     [0, 0, 0.55, 1, 1],
   );
   const staggeredY = useTransform(
     progress,
-    [enterStart, enterMid, enterEnd],
+    pulseKeyframeOffsets([enterStart, enterMid, enterEnd]),
     ["10%", "3%", "0%"],
   );
 
@@ -226,12 +227,12 @@ function TransitionBeat({ beatIndex, progress }: TransitionBeatProps) {
 
   const opacity = useTransform(
     progress,
-    [beatStart, fadeIn, holdStart, holdEnd, fadeOut, beatEnd],
+    pulseKeyframeOffsets([beatStart, fadeIn, holdStart, holdEnd, fadeOut, beatEnd]),
     [0, 0.5, 1, 1, 0.5, 0],
   );
   const y = useTransform(
     progress,
-    [beatStart, fadeIn, holdEnd, beatEnd],
+    pulseKeyframeOffsets([beatStart, fadeIn, holdEnd, beatEnd]),
     ["12%", "0%", "0%", "-8%"],
   );
 
@@ -273,32 +274,38 @@ function ComparisonStage({ progress }: ComparisonStageProps) {
   const reduceMotion = useReducedMotion();
   const revealEnd = TITLE_END;
   const fadeEdge = pulsePhaseFadeEdge(revealEnd, PROBLEMS_END);
+  const titleRange = pulseKeyframeOffsets([TITLE_START, revealEnd]);
   const problemsHoldOpacity = useTransform(
     progress,
-    [TITLE_START, PROBLEMS_END - fadeEdge, PROBLEMS_END],
+    pulseKeyframeOffsets([TITLE_START, PROBLEMS_END - fadeEdge, PROBLEMS_END]),
     [1, 1, 0],
   );
-  const gridOpacity = useTransform(progress, [TITLE_START, revealEnd], [0, 1]);
-  const gridY = useTransform(progress, [TITLE_START, revealEnd], ["14%", "0%"]);
-  const titleLeft = useTransform(progress, [TITLE_START, revealEnd], ["50%", "0%"]);
-  const titleTop = useTransform(progress, [TITLE_START, revealEnd], ["50%", "12%"]);
-  const titleX = useTransform(progress, [TITLE_START, revealEnd], ["-50%", "0%"]);
-  const titleY = useTransform(progress, [TITLE_START, revealEnd], ["-50%", "0%"]);
-  const titleScale = useTransform(progress, [TITLE_START, revealEnd], [1, 0.56]);
+  const gridOpacity = useTransform(progress, titleRange, [0, 1]);
+  const gridY = useTransform(progress, titleRange, ["14%", "0%"]);
+  const titleLeft = useTransform(progress, titleRange, ["50%", "0%"]);
+  const titleTop = useTransform(progress, titleRange, ["50%", "12%"]);
+  const titleX = useTransform(progress, titleRange, ["-50%", "0%"]);
+  const titleY = useTransform(progress, titleRange, ["-50%", "0%"]);
+  const titleScale = useTransform(progress, titleRange, [1, 0.56]);
   const solutionsFade = pulsePhaseFadeEdge(TRANSITION_END, SOLUTIONS_END);
   const solutionsOpacity = useTransform(
     progress,
-    [TRANSITION_END, TRANSITION_END + solutionsFade, SOLUTIONS_END - solutionsFade, SOLUTIONS_END],
+    pulseKeyframeOffsets([
+      TRANSITION_END,
+      TRANSITION_END + solutionsFade,
+      SOLUTIONS_END - solutionsFade,
+      SOLUTIONS_END,
+    ]),
     [0, 1, 1, 1],
   );
   const scrollHintOpacity = useTransform(
     progress,
-    [revealEnd, PROBLEMS_END, TRANSITION_END, TRANSITION_END + solutionsFade],
+    pulseKeyframeOffsets([revealEnd, PROBLEMS_END, TRANSITION_END, TRANSITION_END + solutionsFade]),
     [0, 1, 1, 0],
   );
   const backgroundTone = useTransform(
     progress,
-    [PROBLEMS_END - fadeEdge * 1.5, TRANSITION_END + solutionsFade * 1.5],
+    pulseKeyframeOffsets([PROBLEMS_END - fadeEdge * 1.5, TRANSITION_END + solutionsFade * 1.5]),
     [0, 1],
   );
   const backgroundColor = useTransform(backgroundTone, (value) =>

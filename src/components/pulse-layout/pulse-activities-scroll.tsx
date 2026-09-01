@@ -13,6 +13,7 @@ import { mediaPath } from "@/lib/media";
 import {
   PULSE_SCROLL_LONG_LIST_VH,
   pulseFocusSpread,
+  pulseKeyframeOffsets,
   pulseSectionHeightVh,
 } from "@/lib/pulse-scroll";
 
@@ -141,17 +142,23 @@ function ActivityName({ title, index, progress }: ActivityNameProps) {
 
   const opacity = useTransform(
     progress,
-    [center - focusSpread, center - focusSpread * 0.28, center, center + focusSpread * 0.28, center + focusSpread],
+    pulseKeyframeOffsets([
+      center - focusSpread,
+      center - focusSpread * 0.28,
+      center,
+      center + focusSpread * 0.28,
+      center + focusSpread,
+    ]),
     [0.1, 0.32, 1, 0.32, 0.1],
   );
   const scale = useTransform(
     progress,
-    [center - focusSpread, center, center + focusSpread],
+    pulseKeyframeOffsets([center - focusSpread, center, center + focusSpread]),
     [0.94, 1.06, 0.94],
   );
   const x = useTransform(
     progress,
-    [center - focusSpread, center, center + focusSpread],
+    pulseKeyframeOffsets([center - focusSpread, center, center + focusSpread]),
     [0, 12, 0],
   );
 
@@ -187,17 +194,29 @@ function ActivityImageCard({ activity, index, progress }: ActivityImageProps) {
 
   const scale = useTransform(
     progress,
-    [center - focusSpread, center - focusSpread * 0.35, center, center + focusSpread * 0.35, center + focusSpread],
+    pulseKeyframeOffsets([
+      center - focusSpread,
+      center - focusSpread * 0.35,
+      center,
+      center + focusSpread * 0.35,
+      center + focusSpread,
+    ]),
     [0.92, 0.96, 1, 0.96, 0.92],
   );
   const cardOpacity = useTransform(
     progress,
-    [center - focusSpread, center - focusSpread * 0.35, center, center + focusSpread * 0.35, center + focusSpread],
+    pulseKeyframeOffsets([
+      center - focusSpread,
+      center - focusSpread * 0.35,
+      center,
+      center + focusSpread * 0.35,
+      center + focusSpread,
+    ]),
     [0.38, 0.62, 1, 0.62, 0.38],
   );
   const overlayOpacity = useTransform(
     progress,
-    [center - focusSpread, center, center + focusSpread],
+    pulseKeyframeOffsets([center - focusSpread, center, center + focusSpread]),
     [0.62, 0, 0.62],
   );
 

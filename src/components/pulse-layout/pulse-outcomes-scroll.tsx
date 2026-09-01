@@ -11,6 +11,7 @@ import { useRef } from "react";
 import { usePulseSmoothScrollProgress } from "@/hooks/use-pulse-smooth-scroll-progress";
 import {
   PULSE_SCROLL_PER_ITEM_VH,
+  pulseKeyframeOffsets,
   pulseSectionHeightVh,
 } from "@/lib/pulse-scroll";
 
@@ -71,12 +72,12 @@ function OutcomeColumn({ outcome, index, progress }: OutcomeColumnProps) {
 
   const top = useTransform(
     progress,
-    index === 0 ? [0, 1] : [enterStart, enterEnd],
+    pulseKeyframeOffsets(index === 0 ? [0, 1] : [enterStart, enterEnd]),
     index === 0 ? ["0%", "0%"] : ["100%", "0%"],
   );
   const opacity = useTransform(
     progress,
-    index === 0 ? [0, 1] : [enterStart, enterEnd],
+    pulseKeyframeOffsets(index === 0 ? [0, 1] : [enterStart, enterEnd]),
     index === 0 ? [1, 1] : [0, 1],
   );
 
