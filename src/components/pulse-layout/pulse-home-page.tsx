@@ -1,6 +1,7 @@
 import { PulseActivitiesScroll } from "@/components/pulse-layout/pulse-activities-scroll";
 import { PulseHero } from "@/components/pulse-layout/pulse-hero";
 import { PulseHomeScrollRoot } from "@/components/pulse-layout/pulse-home-scroll-root";
+import { PulseHowWeWorkScroll } from "@/components/pulse-layout/pulse-how-we-work-scroll";
 import { PulseOutcomesScroll } from "@/components/pulse-layout/pulse-outcomes-scroll";
 import { PulsePeComparisonScroll } from "@/components/pulse-layout/pulse-pe-comparison-scroll";
 import { PulseZzzReveal } from "@/components/pulse-layout/pulse-zzz-reveal";
@@ -27,6 +28,7 @@ export function PulseHomePage() {
         <PulseOutcomesScroll />
         <PulsePeComparisonScroll />
         <PulseActivitiesScroll />
+        <PulseHowWeWorkScroll />
       </div>
     </PulseHomeScrollRoot>
   );

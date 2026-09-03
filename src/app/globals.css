@@ -1114,4 +1114,25 @@ html[data-layout="pulse"] h4 {
     height: 100svh;
     max-height: 100svh;
   }
+
+  /** How we work — vertical flowchart spine + nodes */
+  .pulse-how-spine {
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--p-accent) 35%, transparent),
+      var(--p-accent) 18%,
+      var(--p-accent)
+    );
+    box-shadow: 0 0 18px var(--p-accent-glow);
+  }
+
+  .pulse-how-node {
+    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(14, 14, 14, 0.96);
+  }
+
+  .pulse-how-node-accent {
+    border-color: color-mix(in srgb, var(--p-accent) 72%, white);
+    background: color-mix(in srgb, var(--p-accent) 16%, #0b0b0b);
+  }
 }
