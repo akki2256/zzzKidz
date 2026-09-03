@@ -298,7 +298,7 @@ function BenefitsBranchFinale({ progress }: BenefitsBranchProps) {
 
   return (
     <motion.div
-      className="absolute inset-0 z-[4] flex flex-col px-0 pb-5 pt-3 sm:pb-7 sm:pt-4"
+      className="absolute inset-0 z-[4] flex flex-col px-0 pb-4 pt-2 sm:pb-6 sm:pt-3"
       style={reduceMotion ? { opacity: 1 } : { opacity: stageOpacity }}
       aria-label="Benefits for your school"
     >
@@ -308,13 +308,41 @@ function BenefitsBranchFinale({ progress }: BenefitsBranchProps) {
           style={reduceMotion ? undefined : { opacity: titleOpacity }}
         >
           <p className="pulse-eyebrow text-[var(--p-accent)]">The outcome</p>
-          <h3 className="font-display mt-2 text-[clamp(1.45rem,3.4vw,2.45rem)] uppercase leading-[1] tracking-[0.01em] text-white">
+          <h3 className="font-display mt-2 max-w-[18ch] text-[clamp(1.35rem,6.5vw,2.45rem)] uppercase leading-[1.05] tracking-[0.01em] text-white sm:max-w-none">
             Benefits for <span className="pulse-accent-text">your school</span>
           </h3>
         </motion.div>
 
-        {/* Desktop branching diagram — measured to card centers */}
-        <div ref={diagramRef} className="relative mt-3 hidden min-h-0 flex-1 flex-col md:flex">
+        {/* Phone + tablet: compact vertical timeline that fits the sticky viewport */}
+        <div className="relative mt-3 flex min-h-0 flex-1 flex-col lg:hidden">
+          <div className="pulse-how-branch-hub mx-auto mb-3 shrink-0" aria-hidden />
+          <div className="relative min-h-0 flex-1">
+            <div
+              aria-hidden
+              className="absolute bottom-3 left-[1.125rem] top-3 w-px bg-white/12"
+            >
+              <motion.div
+                className="pulse-how-spine absolute inset-x-0 top-0 h-full origin-top"
+                style={reduceMotion ? { scaleY: 1 } : { scaleY: branchDraw }}
+              />
+            </div>
+            <ul className="flex h-full min-h-0 flex-col justify-between gap-2">
+              {schoolBenefits.map((benefit, index) => (
+                <li key={benefit.title} className="min-h-0">
+                  <BenefitCard
+                    benefit={benefit}
+                    index={index}
+                    progress={progress}
+                    layout="mobile"
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Large desktop: measured five-branch fan */}
+        <div ref={diagramRef} className="relative mt-3 hidden min-h-0 flex-1 flex-col lg:flex">
           <div className="relative shrink-0" style={{ height: BRANCH_HEIGHT }}>
             <div
               className="pulse-how-branch-hub absolute left-1/2 top-0 z-[2] -translate-x-1/2"
@@ -395,7 +423,7 @@ function BenefitsBranchFinale({ progress }: BenefitsBranchProps) {
             ) : null}
           </div>
 
-          <div className="grid min-h-0 flex-1 grid-cols-5 gap-3 lg:gap-4">
+          <div className="grid min-h-0 flex-1 grid-cols-5 gap-3 xl:gap-4">
             {schoolBenefits.map((benefit, index) => (
               <div
                 key={benefit.title}
@@ -413,25 +441,6 @@ function BenefitsBranchFinale({ progress }: BenefitsBranchProps) {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Mobile: compact stacked benefits */}
-        <div className="relative mt-3 min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pr-1 md:hidden">
-          <div aria-hidden className="absolute bottom-2 left-5 top-0 w-px bg-white/12">
-            <motion.div
-              className="pulse-how-spine absolute inset-x-0 top-0 h-full origin-top"
-              style={reduceMotion ? { scaleY: 1 } : { scaleY: branchDraw }}
-            />
-          </div>
-          {schoolBenefits.map((benefit, index) => (
-            <BenefitCard
-              key={benefit.title}
-              benefit={benefit}
-              index={index}
-              progress={progress}
-              layout="mobile"
-            />
-          ))}
         </div>
       </div>
     </motion.div>
@@ -532,35 +541,49 @@ function BenefitCard({
   const y = useTransform(
     progress,
     pulseKeyframeOffsets([enter - span * 0.04, settle, 1]),
-    ["22%", "0%", "0%"],
+    layout === "mobile" ? ["8%", "0%", "0%"] : ["22%", "0%", "0%"],
   );
 
   return (
     <motion.article
-      className={`pulse-how-benefit-card relative h-full overflow-hidden rounded-2xl border border-white/12 bg-[#101010]/92 p-3 backdrop-blur-sm sm:p-3.5 ${
-        layout === "mobile" ? "ml-12" : ""
+      className={`pulse-how-benefit-card relative h-full overflow-hidden rounded-2xl border border-white/12 bg-[#101010]/92 backdrop-blur-sm ${
+        layout === "mobile"
+          ? "ml-10 flex min-h-0 items-start gap-3 p-2.5 sm:ml-11 sm:p-3"
+          : "p-3 sm:p-3.5"
       }`}
       style={reduceMotion ? { opacity: 1, y: 0 } : { opacity, y }}
       aria-label={benefit.title}
     >
       {layout === "mobile" ? (
-        <span
-          aria-hidden
-          className="pulse-how-node-accent absolute -left-[2.15rem] top-3 flex h-8 w-8 items-center justify-center rounded-full border"
-        >
-          <Icon className="h-3.5 w-3.5 text-[var(--p-accent)]" strokeWidth={1.75} />
-        </span>
+        <>
+          <span
+            aria-hidden
+            className="pulse-how-node-accent absolute -left-[2.35rem] top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border sm:-left-[2.55rem] sm:h-8 sm:w-8"
+          >
+            <Icon className="h-3.5 w-3.5 text-[var(--p-accent)]" strokeWidth={1.75} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h4 className="font-display text-[clamp(0.82rem,3.4vw,1.05rem)] uppercase leading-[1.1] tracking-[0.02em] text-white">
+              {benefit.title}
+            </h4>
+            <p className="mt-1 text-[0.72rem] leading-snug text-white/62 sm:text-[0.78rem]">
+              {benefit.description}
+            </p>
+          </div>
+        </>
       ) : (
-        <span className="mb-2.5 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-[#0b0b0b]">
-          <Icon className="h-4 w-4 text-[var(--p-accent)]" aria-hidden strokeWidth={1.75} />
-        </span>
+        <>
+          <span className="mb-2.5 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-[#0b0b0b]">
+            <Icon className="h-4 w-4 text-[var(--p-accent)]" aria-hidden strokeWidth={1.75} />
+          </span>
+          <h4 className="font-display text-[clamp(0.78rem,1.15vw,0.98rem)] uppercase leading-[1.08] tracking-[0.02em] text-white">
+            {benefit.title}
+          </h4>
+          <p className="mt-1.5 text-[0.72rem] leading-relaxed text-white/62 sm:text-[0.78rem]">
+            {benefit.description}
+          </p>
+        </>
       )}
-      <h4 className="font-display text-[clamp(0.78rem,1.15vw,0.98rem)] uppercase leading-[1.08] tracking-[0.02em] text-white">
-        {benefit.title}
-      </h4>
-      <p className="mt-1.5 text-[0.72rem] leading-relaxed text-white/62 sm:text-[0.78rem]">
-        {benefit.description}
-      </p>
     </motion.article>
   );
 }
@@ -615,73 +638,75 @@ function HowWeWorkStage({ progress, showIntro = true }: HowWeWorkStageProps) {
   );
 
   return (
-    <div className="pulse-container relative flex h-full w-full flex-col py-8 sm:py-10">
-      {showIntro ? (
-        <motion.header
-          className="relative z-[2] mb-4 shrink-0 sm:mb-6"
-          style={reduceMotion ? undefined : { opacity: introOpacity }}
-        >
-          <p className="pulse-eyebrow text-white/50">How we work</p>
-          <h2 className="font-display mt-3 max-w-4xl text-[clamp(2rem,5.5vw,4rem)] uppercase leading-[0.9] text-white">
-            From first visit to <span className="pulse-accent-text">lasting partnership</span>
-          </h2>
-        </motion.header>
-      ) : null}
-
-      <div ref={viewportRef} className="relative min-h-0 flex-1 overflow-hidden">
+    <div className="relative h-full w-full py-5 sm:py-8">
+      <div ref={viewportRef} className="pulse-container relative h-full min-h-0 overflow-hidden">
         <motion.div
-          className="absolute inset-0"
+          className="absolute inset-0 flex flex-col"
           style={reduceMotion ? undefined : { opacity: stepsLayerOpacity }}
         >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 z-10 h-20 bg-gradient-to-b from-[#070909] to-transparent sm:h-24"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20 bg-gradient-to-t from-[#070909] to-transparent sm:h-24"
-          />
+          {showIntro ? (
+            <motion.header
+              className="relative z-[2] mb-3 shrink-0 sm:mb-5"
+              style={reduceMotion ? undefined : { opacity: introOpacity }}
+            >
+              <p className="pulse-eyebrow text-white/50">How we work</p>
+              <h2 className="font-display mt-2 max-w-4xl text-[clamp(1.7rem,6vw,4rem)] uppercase leading-[0.92] text-white sm:mt-3">
+                From first visit to <span className="pulse-accent-text">lasting partnership</span>
+              </h2>
+            </motion.header>
+          ) : null}
 
-          <div
-            aria-hidden
-            className="pointer-events-none absolute bottom-8 left-1/2 top-8 hidden w-px -translate-x-1/2 bg-white/10 md:block"
-          >
-            <motion.div
-              className="pulse-how-spine absolute inset-x-0 top-0 h-full origin-top"
-              style={reduceMotion ? { scaleY: 1 } : { scaleY: lineScale }}
+          <div className="relative min-h-0 flex-1">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 top-0 z-10 h-16 bg-gradient-to-b from-[#070909] to-transparent sm:h-20"
             />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t from-[#070909] to-transparent sm:h-20"
+            />
+
+            <div
+              aria-hidden
+              className="pointer-events-none absolute bottom-6 left-1/2 top-6 hidden w-px -translate-x-1/2 bg-white/10 md:block"
+            >
+              <motion.div
+                className="pulse-how-spine absolute inset-x-0 top-0 h-full origin-top"
+                style={reduceMotion ? { scaleY: 1 } : { scaleY: lineScale }}
+              />
+            </div>
+
+            <div
+              aria-hidden
+              className="pointer-events-none absolute bottom-6 left-6 top-6 w-px bg-white/10 md:hidden"
+            >
+              <motion.div
+                className="pulse-how-spine absolute inset-x-0 top-0 h-full origin-top"
+                style={reduceMotion ? { scaleY: 1 } : { scaleY: lineScale }}
+              />
+            </div>
+
+            <motion.div
+              ref={stackRef}
+              className="relative h-full will-change-transform"
+              style={reduceMotion ? { y: listStart || 0 } : { y: listY }}
+            >
+              {processSteps.map((step, index) => (
+                <StepRow key={step.title} index={index} stepsProgress={stepsProgress} />
+              ))}
+            </motion.div>
           </div>
 
-          <div
-            aria-hidden
-            className="pointer-events-none absolute bottom-8 left-6 top-8 w-px bg-white/10 md:hidden"
+          <motion.p
+            className="relative z-[2] mt-2 hidden shrink-0 text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/35 sm:block"
+            style={reduceMotion ? undefined : { opacity: introOpacity }}
           >
-            <motion.div
-              className="pulse-how-spine absolute inset-x-0 top-0 h-full origin-top"
-              style={reduceMotion ? { scaleY: 1 } : { scaleY: lineScale }}
-            />
-          </div>
-
-          <motion.div
-            ref={stackRef}
-            className="relative will-change-transform"
-            style={reduceMotion ? { y: listStart || 0 } : { y: listY }}
-          >
-            {processSteps.map((step, index) => (
-              <StepRow key={step.title} index={index} stepsProgress={stepsProgress} />
-            ))}
-          </motion.div>
+            Scroll through {STEP_COUNT} steps · then school benefits
+          </motion.p>
         </motion.div>
 
         <BenefitsBranchFinale progress={progress} />
       </div>
-
-      <motion.p
-        className="relative z-[2] mt-3 hidden text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/35 sm:block"
-        style={reduceMotion ? undefined : { opacity: introOpacity }}
-      >
-        Scroll through {STEP_COUNT} steps · then school benefits
-      </motion.p>
     </div>
   );
 }
@@ -731,7 +756,7 @@ function ReducedMotionHowWeWork() {
           <h3 className="font-display mt-3 text-[clamp(1.8rem,4vw,3rem)] uppercase leading-[0.92] text-white">
             Benefits for <span className="pulse-accent-text">your school</span>
           </h3>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-5">
             {schoolBenefits.map((benefit, index) => {
               const Icon = benefitIcons[index] ?? Award;
               return (
