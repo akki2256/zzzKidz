@@ -1135,4 +1135,37 @@ html[data-layout="pulse"] h4 {
     border-color: color-mix(in srgb, var(--p-accent) 72%, white);
     background: color-mix(in srgb, var(--p-accent) 16%, #0b0b0b);
   }
+
+  .pulse-how-branch-hub {
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 9999px;
+    background: var(--p-accent);
+    box-shadow:
+      0 0 0 5px color-mix(in srgb, var(--p-accent) 16%, transparent),
+      0 0 22px var(--p-accent-glow),
+      0 0 40px color-mix(in srgb, var(--p-accent) 28%, transparent);
+  }
+
+  .pulse-how-branch-svg {
+    overflow: visible;
+  }
+
+  .pulse-how-benefit-card {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+    transition:
+      border-color 0.35s ease,
+      box-shadow 0.45s ease,
+      transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (hover: hover) {
+    .pulse-how-benefit-card:hover {
+      border-color: color-mix(in srgb, var(--p-accent) 45%, rgba(255, 255, 255, 0.12));
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.35),
+        0 0 28px var(--p-accent-glow);
+      transform: translateY(-0.2rem);
+    }
+  }
 }

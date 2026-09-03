@@ -44,10 +44,10 @@ export function PulseHomeScrollRoot({ children }: PulseHomeScrollRootProps) {
     <ReactLenis
       root
       options={{
-        lerp: 0.085,
+        lerp: 0.075,
         smoothWheel: true,
-        wheelMultiplier: 1.15,
-        touchMultiplier: 1.8,
+        wheelMultiplier: 0.62,
+        touchMultiplier: 1.4,
         syncTouch: true,
       }}
     >

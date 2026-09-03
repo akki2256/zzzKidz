@@ -7,6 +7,12 @@ export const PULSE_SCROLL_PER_ITEM_VH = 34;
 /** Shorter step for long lists so the section does not feel endless. */
 export const PULSE_SCROLL_LONG_LIST_VH = 28;
 
+/**
+ * Scroll distance per item in focus-carousel sections (activities, how-we-work).
+ * Longer runway = more wheel travel per highlight — resists mouse-wheel skips.
+ */
+export const PULSE_SCROLL_FOCUS_ITEM_VH = 58;
+
 /** Runway for a four-column grid phase (problems / solutions). */
 export const PULSE_GRID_PHASE_VH = 56;
 
@@ -43,6 +49,66 @@ export function pulsePhaseBounds(segmentVh: number[]): number[] {
 export function pulseFocusSpread(itemCount: number, spread = 0.52): number {
   const steps = Math.max(itemCount - 1, 1);
   return spread / steps;
+}
+
+/**
+ * Hold the active item at full strength for most of its slot.
+ * Shoulders fade quickly so a wheel tick still lands inside the plateau.
+ */
+export function pulseFocusOpacityKeyframes(
+  center: number,
+  halfSpread: number,
+): { input: number[]; output: number[] } {
+  const s = halfSpread;
+  return {
+    input: [
+      center - s,
+      center - s * 0.82,
+      center - s * 0.48,
+      center + s * 0.48,
+      center + s * 0.82,
+      center + s,
+    ],
+    output: [0.08, 0.18, 1, 1, 0.18, 0.08],
+  };
+}
+
+/** Image/card opacity — same long plateau, dimmer inactive cards. */
+export function pulseFocusCardOpacityKeyframes(
+  center: number,
+  halfSpread: number,
+): { input: number[]; output: number[] } {
+  const s = halfSpread;
+  return {
+    input: [
+      center - s,
+      center - s * 0.82,
+      center - s * 0.48,
+      center + s * 0.48,
+      center + s * 0.82,
+      center + s,
+    ],
+    output: [0.2, 0.36, 1, 1, 0.36, 0.2],
+  };
+}
+
+/** Dark overlay stays off for the same plateau as card highlight. */
+export function pulseFocusOverlayKeyframes(
+  center: number,
+  halfSpread: number,
+): { input: number[]; output: number[] } {
+  const s = halfSpread;
+  return {
+    input: [
+      center - s,
+      center - s * 0.82,
+      center - s * 0.48,
+      center + s * 0.48,
+      center + s * 0.82,
+      center + s,
+    ],
+    output: [0.72, 0.48, 0, 0, 0.48, 0.72],
+  };
 }
 
 /** Gentle ease-in-out for mapping raw scroll progress. */

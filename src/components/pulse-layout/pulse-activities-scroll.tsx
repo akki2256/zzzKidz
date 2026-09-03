@@ -11,7 +11,10 @@ import { useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { usePulseSmoothScrollProgress } from "@/hooks/use-pulse-smooth-scroll-progress";
 import { mediaPath } from "@/lib/media";
 import {
-  PULSE_SCROLL_LONG_LIST_VH,
+  PULSE_SCROLL_FOCUS_ITEM_VH,
+  pulseFocusCardOpacityKeyframes,
+  pulseFocusOpacityKeyframes,
+  pulseFocusOverlayKeyframes,
   pulseFocusSpread,
   pulseKeyframeOffsets,
   pulseSectionHeightVh,
@@ -105,11 +108,11 @@ const TEXT_ROW_STRIDE = TEXT_ITEM_HEIGHT + TEXT_ITEM_GAP;
 const IMAGE_ITEM_HEIGHT = 440;
 const IMAGE_GAP = 16;
 
-/** Match homepage scroll pacing — one viewport step per activity transition. */
-const SCROLL_RUNWAY_VH = Math.max(activities.length - 1, 1) * PULSE_SCROLL_LONG_LIST_VH;
+/** Match homepage scroll pacing — generous runway so one wheel tick ≈ one activity. */
+const SCROLL_RUNWAY_VH = Math.max(activities.length - 1, 1) * PULSE_SCROLL_FOCUS_ITEM_VH;
 
-/** Narrow band — one dominant active title at a time. */
-const focusSpread = pulseFocusSpread(activities.length, 0.36);
+/** Each item owns ~one slot at full brightness; fade only at the edges. */
+const focusSpread = pulseFocusSpread(activities.length, 1.08);
 
 function useViewportHeight(ref: RefObject<HTMLDivElement | null>) {
   const [height, setHeight] = useState(0);
@@ -140,26 +143,31 @@ function ActivityName({ title, index, progress }: ActivityNameProps) {
   const steps = activities.length - 1;
   const center = steps === 0 ? 0 : index / steps;
 
+  const opacityKeyframes = pulseFocusOpacityKeyframes(center, focusSpread);
   const opacity = useTransform(
     progress,
-    pulseKeyframeOffsets([
-      center - focusSpread,
-      center - focusSpread * 0.28,
-      center,
-      center + focusSpread * 0.28,
-      center + focusSpread,
-    ]),
-    [0.1, 0.32, 1, 0.32, 0.1],
+    pulseKeyframeOffsets(opacityKeyframes.input),
+    opacityKeyframes.output,
   );
   const scale = useTransform(
     progress,
-    pulseKeyframeOffsets([center - focusSpread, center, center + focusSpread]),
-    [0.94, 1.06, 0.94],
+    pulseKeyframeOffsets([
+      center - focusSpread,
+      center - focusSpread * 0.48,
+      center + focusSpread * 0.48,
+      center + focusSpread,
+    ]),
+    [0.94, 1.04, 1.04, 0.94],
   );
   const x = useTransform(
     progress,
-    pulseKeyframeOffsets([center - focusSpread, center, center + focusSpread]),
-    [0, 12, 0],
+    pulseKeyframeOffsets([
+      center - focusSpread,
+      center - focusSpread * 0.48,
+      center + focusSpread * 0.48,
+      center + focusSpread,
+    ]),
+    [0, 10, 10, 0],
   );
 
   return (
@@ -192,32 +200,27 @@ function ActivityImageCard({ activity, index, progress }: ActivityImageProps) {
   const steps = activities.length - 1;
   const center = steps === 0 ? 0 : index / steps;
 
+  const cardKeyframes = pulseFocusCardOpacityKeyframes(center, focusSpread);
+  const overlayKeyframes = pulseFocusOverlayKeyframes(center, focusSpread);
   const scale = useTransform(
     progress,
     pulseKeyframeOffsets([
       center - focusSpread,
-      center - focusSpread * 0.35,
-      center,
-      center + focusSpread * 0.35,
+      center - focusSpread * 0.48,
+      center + focusSpread * 0.48,
       center + focusSpread,
     ]),
-    [0.92, 0.96, 1, 0.96, 0.92],
+    [0.94, 1, 1, 0.94],
   );
   const cardOpacity = useTransform(
     progress,
-    pulseKeyframeOffsets([
-      center - focusSpread,
-      center - focusSpread * 0.35,
-      center,
-      center + focusSpread * 0.35,
-      center + focusSpread,
-    ]),
-    [0.38, 0.62, 1, 0.62, 0.38],
+    pulseKeyframeOffsets(cardKeyframes.input),
+    cardKeyframes.output,
   );
   const overlayOpacity = useTransform(
     progress,
-    pulseKeyframeOffsets([center - focusSpread, center, center + focusSpread]),
-    [0.62, 0, 0.62],
+    pulseKeyframeOffsets(overlayKeyframes.input),
+    overlayKeyframes.output,
   );
 
   return (

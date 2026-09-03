@@ -282,7 +282,7 @@ export const studentBenefits = [
 export const schoolBenefits = [
   {
     title: "Stronger School Brand & Differentiation",
-    description: "A modern fitness program that sets your school apart.",
+    description: "A modern fitness program that sets your school apart from the rest.",
   },
   {
     title: "Greater Parent Satisfaction & Trust",

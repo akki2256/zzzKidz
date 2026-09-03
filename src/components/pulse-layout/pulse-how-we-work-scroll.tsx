@@ -7,23 +7,29 @@ import {
   type MotionValue,
 } from "framer-motion";
 import {
+  Award,
+  Building2,
   CalendarDays,
   ClipboardCheck,
   ClipboardList,
   Dumbbell,
+  Megaphone,
   PencilRuler,
   ShieldCheck,
+  TrendingUp,
   Users,
   Wrench,
   type LucideIcon,
 } from "lucide-react";
 import { useLayoutEffect, useRef, useState, type RefObject } from "react";
-import { processSteps } from "@/content/site";
+import { processSteps, schoolBenefits } from "@/content/site";
 import { usePulseSmoothScrollProgress } from "@/hooks/use-pulse-smooth-scroll-progress";
 import {
-  PULSE_SCROLL_LONG_LIST_VH,
+  PULSE_SCROLL_FOCUS_ITEM_VH,
+  pulseFocusOpacityKeyframes,
   pulseFocusSpread,
   pulseKeyframeOffsets,
+  pulsePhaseBounds,
   pulseSectionHeightVh,
 } from "@/lib/pulse-scroll";
 
@@ -38,11 +44,24 @@ const stepIcons: LucideIcon[] = [
   Wrench,
 ];
 
+const benefitIcons: LucideIcon[] = [
+  TrendingUp,
+  Users,
+  Award,
+  Building2,
+  Megaphone,
+];
+
 const STEP_COUNT = processSteps.length;
-const RUNWAY_VH = STEP_COUNT * PULSE_SCROLL_LONG_LIST_VH;
-const focusSpread = pulseFocusSpread(STEP_COUNT, 0.72);
-/** Approximate row height used until measured. */
+const BENEFIT_COUNT = schoolBenefits.length;
+const STEPS_RUNWAY_VH = Math.max(STEP_COUNT - 1, 1) * PULSE_SCROLL_FOCUS_ITEM_VH;
+const BENEFITS_RUNWAY_VH = 78;
+const RUNWAY_VH = STEPS_RUNWAY_VH + BENEFITS_RUNWAY_VH;
+const [, STEPS_END] = pulsePhaseBounds([STEPS_RUNWAY_VH, BENEFITS_RUNWAY_VH]);
+
+const stepFocusSpread = pulseFocusSpread(STEP_COUNT, 1.1);
 const ROW_ESTIMATE = 168;
+const BRANCH_HEIGHT = 112;
 
 function useViewportHeight(ref: RefObject<HTMLElement | null>) {
   const [height, setHeight] = useState(0);
@@ -62,10 +81,10 @@ function useViewportHeight(ref: RefObject<HTMLElement | null>) {
 
 type StepRowProps = {
   index: number;
-  progress: MotionValue<number>;
+  stepsProgress: MotionValue<number>;
 };
 
-function StepRow({ index, progress }: StepRowProps) {
+function StepRow({ index, stepsProgress }: StepRowProps) {
   const step = processSteps[index];
   const Icon = stepIcons[index] ?? ClipboardList;
   const steps = Math.max(STEP_COUNT - 1, 1);
@@ -73,26 +92,31 @@ function StepRow({ index, progress }: StepRowProps) {
   const accent = index % 2 === 1;
   const alignRight = index % 2 === 1;
 
+  const opacityKeyframes = pulseFocusOpacityKeyframes(center, stepFocusSpread);
   const opacity = useTransform(
-    progress,
-    pulseKeyframeOffsets([
-      center - focusSpread,
-      center - focusSpread * 0.32,
-      center,
-      center + focusSpread * 0.38,
-      center + focusSpread,
-    ]),
-    [0.14, 0.4, 1, 0.42, 0.14],
+    stepsProgress,
+    pulseKeyframeOffsets(opacityKeyframes.input),
+    opacityKeyframes.output,
   );
   const scale = useTransform(
-    progress,
-    pulseKeyframeOffsets([center - focusSpread * 0.4, center, center + focusSpread * 0.4]),
-    [0.92, 1, 0.94],
+    stepsProgress,
+    pulseKeyframeOffsets([
+      center - stepFocusSpread,
+      center - stepFocusSpread * 0.48,
+      center + stepFocusSpread * 0.48,
+      center + stepFocusSpread,
+    ]),
+    [0.92, 1, 1, 0.94],
   );
   const glow = useTransform(
-    progress,
-    pulseKeyframeOffsets([center - focusSpread * 0.28, center, center + focusSpread * 0.28]),
-    [0.12, 1, 0.18],
+    stepsProgress,
+    pulseKeyframeOffsets([
+      center - stepFocusSpread,
+      center - stepFocusSpread * 0.48,
+      center + stepFocusSpread * 0.48,
+      center + stepFocusSpread,
+    ]),
+    [0.08, 1, 1, 0.08],
   );
   const nodeShadow = useTransform(glow, (v) =>
     accent
@@ -106,7 +130,6 @@ function StepRow({ index, progress }: StepRowProps) {
       style={{ opacity, scale }}
       aria-label={`Step ${index + 1}: ${step.title}`}
     >
-      {/* Desktop left column */}
       <div className={`hidden min-w-0 md:block ${alignRight ? "invisible" : "text-right"}`}>
         {!alignRight ? (
           <StepCopy index={index} title={step.title} points={step.points} accent={accent} align="right" />
@@ -127,13 +150,11 @@ function StepRow({ index, progress }: StepRowProps) {
           />
         </motion.div>
 
-        {/* Mobile copy beside node */}
         <div className="min-w-0 flex-1 md:hidden">
           <StepCopy index={index} title={step.title} points={step.points} accent={accent} align="left" />
         </div>
       </div>
 
-      {/* Desktop right column */}
       <div className={`hidden min-w-0 md:block ${alignRight ? "text-left" : "invisible"}`}>
         {alignRight ? (
           <StepCopy index={index} title={step.title} points={step.points} accent={accent} align="left" />
@@ -192,6 +213,358 @@ function StepCopy({
   );
 }
 
+type BenefitsBranchProps = {
+  progress: MotionValue<number>;
+};
+
+type BranchGeometry = {
+  width: number;
+  height: number;
+  hubX: number;
+  hubY: number;
+  ends: number[];
+};
+
+function buildBranchPath(hubX: number, hubY: number, endX: number, endY: number): string {
+  const trunkY = hubY + 28;
+  const midY = hubY + (endY - hubY) * 0.58;
+  // Keep the center branch a true vertical line — degenerate cubics often fail to draw.
+  if (Math.abs(endX - hubX) < 1) {
+    return `M${hubX} ${hubY} L${hubX} ${endY}`;
+  }
+  return `M${hubX} ${hubY} L${hubX} ${trunkY} C${hubX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`;
+}
+
+function BenefitsBranchFinale({ progress }: BenefitsBranchProps) {
+  const reduceMotion = useReducedMotion();
+  const diagramRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [geometry, setGeometry] = useState<BranchGeometry | null>(null);
+
+  const benefitsStart = STEPS_END;
+  const benefitsMid = STEPS_END + (1 - STEPS_END) * 0.38;
+  const benefitsHold = STEPS_END + (1 - STEPS_END) * 0.55;
+
+  const stageOpacity = useTransform(
+    progress,
+    pulseKeyframeOffsets([benefitsStart, benefitsMid, 1]),
+    [0, 1, 1],
+  );
+  const branchDraw = useTransform(
+    progress,
+    pulseKeyframeOffsets([benefitsStart, benefitsMid, benefitsHold, 1]),
+    [0, 0.55, 1, 1],
+  );
+  const titleOpacity = useTransform(
+    progress,
+    pulseKeyframeOffsets([benefitsStart, benefitsMid, 1]),
+    [0, 1, 1],
+  );
+  const washOpacity = useTransform(branchDraw, (v) => Math.min(Math.max(v, 0), 1) * 0.7);
+
+  useLayoutEffect(() => {
+    const diagram = diagramRef.current;
+    if (!diagram) return;
+
+    const measure = () => {
+      const bounds = diagram.getBoundingClientRect();
+      if (bounds.width < 8) return;
+
+      const ends = schoolBenefits.map((_, index) => {
+        const card = cardRefs.current[index];
+        if (!card) return bounds.width * ((index + 0.5) / BENEFIT_COUNT);
+        const cardBounds = card.getBoundingClientRect();
+        return cardBounds.left + cardBounds.width / 2 - bounds.left;
+      });
+
+      setGeometry({
+        width: bounds.width,
+        height: BRANCH_HEIGHT,
+        hubX: bounds.width / 2,
+        hubY: 10,
+        ends,
+      });
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(diagram);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
+  return (
+    <motion.div
+      className="absolute inset-0 z-[4] flex flex-col px-0 pb-5 pt-3 sm:pb-7 sm:pt-4"
+      style={reduceMotion ? { opacity: 1 } : { opacity: stageOpacity }}
+      aria-label="Benefits for your school"
+    >
+      <div className="pulse-container flex h-full min-h-0 w-full flex-col">
+        <motion.div
+          className="relative z-[2] shrink-0 pb-1"
+          style={reduceMotion ? undefined : { opacity: titleOpacity }}
+        >
+          <p className="pulse-eyebrow text-[var(--p-accent)]">The outcome</p>
+          <h3 className="font-display mt-2 text-[clamp(1.45rem,3.4vw,2.45rem)] uppercase leading-[1] tracking-[0.01em] text-white">
+            Benefits for <span className="pulse-accent-text">your school</span>
+          </h3>
+        </motion.div>
+
+        {/* Desktop branching diagram — measured to card centers */}
+        <div ref={diagramRef} className="relative mt-3 hidden min-h-0 flex-1 flex-col md:flex">
+          <div className="relative shrink-0" style={{ height: BRANCH_HEIGHT }}>
+            <div
+              className="pulse-how-branch-hub absolute left-1/2 top-0 z-[2] -translate-x-1/2"
+              aria-hidden
+            />
+
+            {geometry ? (
+              <svg
+                className="pulse-how-branch-svg pointer-events-none absolute inset-0 h-full w-full overflow-visible"
+                viewBox={`0 0 ${geometry.width} ${geometry.height}`}
+                width={geometry.width}
+                height={geometry.height}
+                fill="none"
+                aria-hidden
+              >
+                <defs>
+                  <linearGradient
+                    id="pulse-branch-stroke"
+                    x1={geometry.hubX}
+                    y1={geometry.hubY}
+                    x2={geometry.hubX}
+                    y2={geometry.height}
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop offset="0%" stopColor="var(--p-accent)" stopOpacity="1" />
+                    <stop offset="100%" stopColor="var(--p-accent)" stopOpacity="0.62" />
+                  </linearGradient>
+                  <linearGradient
+                    id="pulse-branch-wash"
+                    x1={geometry.hubX}
+                    y1={geometry.hubY}
+                    x2={geometry.hubX}
+                    y2={geometry.height}
+                    gradientUnits="userSpaceOnUse"
+                  >
+                    <stop offset="0%" stopColor="var(--p-accent)" stopOpacity="0.12" />
+                    <stop offset="100%" stopColor="var(--p-accent)" stopOpacity="0" />
+                  </linearGradient>
+                  <filter id="pulse-branch-glow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="2.8" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                <motion.path
+                  d={`M${geometry.ends[0]} ${geometry.height - 2} L${geometry.ends[BENEFIT_COUNT - 1]} ${geometry.height - 2} L${geometry.hubX} ${geometry.hubY} Z`}
+                  fill="url(#pulse-branch-wash)"
+                  style={reduceMotion ? { opacity: 0.7 } : { opacity: washOpacity }}
+                />
+
+                {geometry.ends.map((endX, index) => (
+                  <BranchPath
+                    key={`branch-${index}`}
+                    d={buildBranchPath(
+                      geometry.hubX,
+                      geometry.hubY + 8,
+                      endX,
+                      geometry.height - 6,
+                    )}
+                    index={index}
+                    drawProgress={branchDraw}
+                  />
+                ))}
+
+                {geometry.ends.map((endX, index) => (
+                  <BranchEndpoint
+                    key={`end-${index}`}
+                    cx={endX}
+                    cy={geometry.height - 4}
+                    index={index}
+                    drawProgress={branchDraw}
+                  />
+                ))}
+              </svg>
+            ) : null}
+          </div>
+
+          <div className="grid min-h-0 flex-1 grid-cols-5 gap-3 lg:gap-4">
+            {schoolBenefits.map((benefit, index) => (
+              <div
+                key={benefit.title}
+                ref={(node) => {
+                  cardRefs.current[index] = node;
+                }}
+                className="min-h-0"
+              >
+                <BenefitCard
+                  benefit={benefit}
+                  index={index}
+                  progress={progress}
+                  layout="desktop"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile: compact stacked benefits */}
+        <div className="relative mt-3 min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pr-1 md:hidden">
+          <div aria-hidden className="absolute bottom-2 left-5 top-0 w-px bg-white/12">
+            <motion.div
+              className="pulse-how-spine absolute inset-x-0 top-0 h-full origin-top"
+              style={reduceMotion ? { scaleY: 1 } : { scaleY: branchDraw }}
+            />
+          </div>
+          {schoolBenefits.map((benefit, index) => (
+            <BenefitCard
+              key={benefit.title}
+              benefit={benefit}
+              index={index}
+              progress={progress}
+              layout="mobile"
+            />
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function BranchPath({
+  d,
+  index,
+  drawProgress,
+}: {
+  d: string;
+  index: number;
+  drawProgress: MotionValue<number>;
+}) {
+  const start = index * 0.05;
+  const pathLength = useTransform(drawProgress, (v) => {
+    const local = Math.min(Math.max((v - start) / Math.max(1 - start, 0.001), 0), 1);
+    return local;
+  });
+  const opacity = useTransform(pathLength, (v) => 0.4 + v * 0.6);
+  const glowOpacity = useTransform(pathLength, (v) => v * 0.22);
+
+  return (
+    <g filter="url(#pulse-branch-glow)">
+      <motion.path
+        d={d}
+        fill="none"
+        stroke="var(--p-accent)"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ pathLength, opacity: glowOpacity }}
+      />
+      <motion.path
+        d={d}
+        fill="none"
+        stroke="url(#pulse-branch-stroke)"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ pathLength, opacity }}
+      />
+    </g>
+  );
+}
+
+function BranchEndpoint({
+  cx,
+  cy,
+  index,
+  drawProgress,
+}: {
+  cx: number;
+  cy: number;
+  index: number;
+  drawProgress: MotionValue<number>;
+}) {
+  const start = 0.4 + index * 0.07;
+  const appear = useTransform(drawProgress, (v) => {
+    const local = Math.min(Math.max((v - start) / 0.28, 0), 1);
+    return local;
+  });
+
+  return (
+    <motion.circle
+      cx={cx}
+      cy={cy}
+      r="4"
+      className="fill-[var(--p-accent)]"
+      style={{ opacity: appear, scale: appear }}
+    />
+  );
+}
+
+function BenefitCard({
+  benefit,
+  index,
+  progress,
+  layout,
+}: {
+  benefit: (typeof schoolBenefits)[number];
+  index: number;
+  progress: MotionValue<number>;
+  layout: "desktop" | "mobile";
+}) {
+  const reduceMotion = useReducedMotion();
+  const Icon = benefitIcons[index] ?? Award;
+  const span = 1 - STEPS_END;
+  const enter = STEPS_END + span * (0.42 + index * 0.08);
+  const settle = Math.min(enter + span * 0.12, 0.98);
+
+  const opacity = useTransform(
+    progress,
+    pulseKeyframeOffsets([enter - span * 0.06, enter, settle, 1]),
+    [0, 0.55, 1, 1],
+  );
+  const y = useTransform(
+    progress,
+    pulseKeyframeOffsets([enter - span * 0.04, settle, 1]),
+    ["22%", "0%", "0%"],
+  );
+
+  return (
+    <motion.article
+      className={`pulse-how-benefit-card relative h-full overflow-hidden rounded-2xl border border-white/12 bg-[#101010]/92 p-3 backdrop-blur-sm sm:p-3.5 ${
+        layout === "mobile" ? "ml-12" : ""
+      }`}
+      style={reduceMotion ? { opacity: 1, y: 0 } : { opacity, y }}
+      aria-label={benefit.title}
+    >
+      {layout === "mobile" ? (
+        <span
+          aria-hidden
+          className="pulse-how-node-accent absolute -left-[2.15rem] top-3 flex h-8 w-8 items-center justify-center rounded-full border"
+        >
+          <Icon className="h-3.5 w-3.5 text-[var(--p-accent)]" strokeWidth={1.75} />
+        </span>
+      ) : (
+        <span className="mb-2.5 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-[#0b0b0b]">
+          <Icon className="h-4 w-4 text-[var(--p-accent)]" aria-hidden strokeWidth={1.75} />
+        </span>
+      )}
+      <h4 className="font-display text-[clamp(0.78rem,1.15vw,0.98rem)] uppercase leading-[1.08] tracking-[0.02em] text-white">
+        {benefit.title}
+      </h4>
+      <p className="mt-1.5 text-[0.72rem] leading-relaxed text-white/62 sm:text-[0.78rem]">
+        {benefit.description}
+      </p>
+    </motion.article>
+  );
+}
+
 type HowWeWorkStageProps = {
   progress: MotionValue<number>;
   showIntro?: boolean;
@@ -225,66 +598,90 @@ function HowWeWorkStage({ progress, showIntro = true }: HowWeWorkStageProps) {
   const steps = Math.max(STEP_COUNT - 1, 1);
   const listStart = viewportH / 2 - rowStride / 2;
   const listEnd = viewportH / 2 - (steps * rowStride + rowStride / 2);
-  const listY = useTransform(progress, [0, 1], [listStart, listEnd]);
-  const lineScale = useTransform(progress, [0, 1], [0.06, 1]);
+
+  const stepsProgress = useTransform(progress, [0, STEPS_END], [0, 1]);
+  const listY = useTransform(stepsProgress, [0, 1], [listStart, listEnd]);
+  const lineScale = useTransform(stepsProgress, [0, 1], [0.06, 1]);
+
+  const stepsLayerOpacity = useTransform(
+    progress,
+    pulseKeyframeOffsets([STEPS_END - 0.04, STEPS_END + 0.04, 1]),
+    [1, 0.12, 0],
+  );
+  const introOpacity = useTransform(
+    progress,
+    pulseKeyframeOffsets([STEPS_END - 0.06, STEPS_END, 1]),
+    [1, 0, 0],
+  );
 
   return (
     <div className="pulse-container relative flex h-full w-full flex-col py-8 sm:py-10">
       {showIntro ? (
-        <header className="relative z-[2] mb-4 shrink-0 sm:mb-6">
+        <motion.header
+          className="relative z-[2] mb-4 shrink-0 sm:mb-6"
+          style={reduceMotion ? undefined : { opacity: introOpacity }}
+        >
           <p className="pulse-eyebrow text-white/50">How we work</p>
           <h2 className="font-display mt-3 max-w-4xl text-[clamp(2rem,5.5vw,4rem)] uppercase leading-[0.9] text-white">
             From first visit to <span className="pulse-accent-text">lasting partnership</span>
           </h2>
-        </header>
+        </motion.header>
       ) : null}
 
       <div ref={viewportRef} className="relative min-h-0 flex-1 overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-20 bg-gradient-to-b from-[#070909] to-transparent sm:h-24"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20 bg-gradient-to-t from-[#070909] to-transparent sm:h-24"
-        />
-
-        {/* Desktop center spine */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute bottom-8 left-1/2 top-8 hidden w-px -translate-x-1/2 bg-white/10 md:block"
-        >
-          <motion.div
-            className="pulse-how-spine absolute inset-x-0 top-0 h-full origin-top"
-            style={reduceMotion ? { scaleY: 1 } : { scaleY: lineScale }}
-          />
-        </div>
-
-        {/* Mobile left spine */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute bottom-8 left-6 top-8 w-px bg-white/10 md:hidden"
-        >
-          <motion.div
-            className="pulse-how-spine absolute inset-x-0 top-0 h-full origin-top"
-            style={reduceMotion ? { scaleY: 1 } : { scaleY: lineScale }}
-          />
-        </div>
-
         <motion.div
-          ref={stackRef}
-          className="relative will-change-transform"
-          style={reduceMotion ? { y: listStart || 0 } : { y: listY }}
+          className="absolute inset-0"
+          style={reduceMotion ? undefined : { opacity: stepsLayerOpacity }}
         >
-          {processSteps.map((step, index) => (
-            <StepRow key={step.title} index={index} progress={progress} />
-          ))}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 z-10 h-20 bg-gradient-to-b from-[#070909] to-transparent sm:h-24"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-20 bg-gradient-to-t from-[#070909] to-transparent sm:h-24"
+          />
+
+          <div
+            aria-hidden
+            className="pointer-events-none absolute bottom-8 left-1/2 top-8 hidden w-px -translate-x-1/2 bg-white/10 md:block"
+          >
+            <motion.div
+              className="pulse-how-spine absolute inset-x-0 top-0 h-full origin-top"
+              style={reduceMotion ? { scaleY: 1 } : { scaleY: lineScale }}
+            />
+          </div>
+
+          <div
+            aria-hidden
+            className="pointer-events-none absolute bottom-8 left-6 top-8 w-px bg-white/10 md:hidden"
+          >
+            <motion.div
+              className="pulse-how-spine absolute inset-x-0 top-0 h-full origin-top"
+              style={reduceMotion ? { scaleY: 1 } : { scaleY: lineScale }}
+            />
+          </div>
+
+          <motion.div
+            ref={stackRef}
+            className="relative will-change-transform"
+            style={reduceMotion ? { y: listStart || 0 } : { y: listY }}
+          >
+            {processSteps.map((step, index) => (
+              <StepRow key={step.title} index={index} stepsProgress={stepsProgress} />
+            ))}
+          </motion.div>
         </motion.div>
+
+        <BenefitsBranchFinale progress={progress} />
       </div>
 
-      <p className="relative z-[2] mt-3 hidden text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/35 sm:block">
-        Scroll through {STEP_COUNT} steps
-      </p>
+      <motion.p
+        className="relative z-[2] mt-3 hidden text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/35 sm:block"
+        style={reduceMotion ? undefined : { opacity: introOpacity }}
+      >
+        Scroll through {STEP_COUNT} steps · then school benefits
+      </motion.p>
     </div>
   );
 }
@@ -294,7 +691,7 @@ function ReducedMotionHowWeWork() {
     <section
       id="pulse-how-we-work"
       className="relative border-b border-white/10 bg-[#070909] py-16 sm:py-24"
-      aria-label="How we work — eight delivery steps"
+      aria-label="How we work — delivery steps and school benefits"
     >
       <div className="pulse-container">
         <p className="pulse-eyebrow text-white/50">How we work</p>
@@ -328,18 +725,43 @@ function ReducedMotionHowWeWork() {
             );
           })}
         </ol>
+
+        <div className="mt-16 border-t border-white/10 pt-12">
+          <p className="pulse-eyebrow text-[var(--p-accent)]">The outcome</p>
+          <h3 className="font-display mt-3 text-[clamp(1.8rem,4vw,3rem)] uppercase leading-[0.92] text-white">
+            Benefits for <span className="pulse-accent-text">your school</span>
+          </h3>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {schoolBenefits.map((benefit, index) => {
+              const Icon = benefitIcons[index] ?? Award;
+              return (
+                <article
+                  key={benefit.title}
+                  className="pulse-how-benefit-card rounded-2xl border border-white/12 bg-[#101010] p-4"
+                >
+                  <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-[#0b0b0b]">
+                    <Icon className="h-4 w-4 text-[var(--p-accent)]" aria-hidden />
+                  </span>
+                  <h4 className="font-display text-base uppercase leading-[1.05] text-white">
+                    {benefit.title}
+                  </h4>
+                  <p className="mt-2 text-sm leading-relaxed text-white/62">{benefit.description}</p>
+                </article>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
 type PulseHowWeWorkScrollProps = {
-  /** When false, hides the sticky intro (useful on /how-it-works which has its own hero). */
   showIntro?: boolean;
 };
 
 /**
- * Sticky vertical flowchart — active step centers as the user scrolls the runway.
+ * Sticky vertical flowchart — steps first, then a five-branch school benefits finale.
  */
 export function PulseHowWeWorkScroll({ showIntro = true }: PulseHowWeWorkScrollProps) {
   const sectionRef = useRef<HTMLElement>(null);
@@ -357,7 +779,7 @@ export function PulseHowWeWorkScroll({ showIntro = true }: PulseHowWeWorkScrollP
       id="pulse-how-we-work"
       className="relative border-b border-white/10 bg-[#070909]"
       style={{ height: `${scrollHeightVh}vh` }}
-      aria-label="How we work — eight delivery steps"
+      aria-label="How we work — delivery steps and school benefits"
     >
       <div className="sticky top-0 z-[1] flex h-[100svh] min-h-[36rem] w-full items-center overflow-hidden bg-[#070909]">
         <HowWeWorkStage progress={scrollYProgress} showIntro={showIntro} />
