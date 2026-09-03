@@ -1136,6 +1136,15 @@ html[data-layout="pulse"] h4 {
     background: color-mix(in srgb, var(--p-accent) 16%, #0b0b0b);
   }
 
+  /** Shared display heading — keeps Bebas ascenders from clipping */
+  .pulse-how-heading {
+    font-size: clamp(1.7rem, 6vw, 4rem);
+    line-height: 0.98;
+    letter-spacing: 0.01em;
+    padding-top: 0.12em;
+    overflow: visible;
+  }
+
   .pulse-how-branch-hub {
     width: 0.85rem;
     height: 0.85rem;
@@ -1166,6 +1175,73 @@ html[data-layout="pulse"] h4 {
         0 16px 40px rgba(0, 0, 0, 0.35),
         0 0 28px var(--p-accent-glow);
       transform: translateY(-0.2rem);
+    }
+  }
+
+  .pulse-team-ribbon {
+    background: linear-gradient(
+      to top,
+      rgba(6, 8, 8, 0.82) 0%,
+      rgba(6, 8, 8, 0.55) 70%,
+      rgba(6, 8, 8, 0.12) 100%
+    );
+    overflow: visible;
+  }
+
+  .pulse-team-ribbon h3 {
+    overflow: visible;
+    padding-bottom: 0.22em;
+  }
+
+  .pulse-team-deck {
+    width: min(40rem, 92vw, calc((100svh - 8.25rem) * 0.84));
+    height: min(calc(100svh - 8.25rem), 48rem);
+    max-width: 100%;
+    max-height: calc(100svh - 8.25rem);
+  }
+
+  @media (max-width: 640px) {
+    .pulse-team-deck {
+      width: min(26rem, calc(100vw - 1.5rem), calc((100svh - 8rem) * 0.86));
+      height: min(calc(100svh - 8rem), 38rem);
+      max-height: calc(100svh - 8rem);
+    }
+  }
+
+  .pulse-team-ribbon-copy {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.28s ease,
+      margin 0.35s ease;
+  }
+
+  .pulse-team-ribbon-copy > p {
+    overflow: hidden;
+  }
+
+  .pulse-team-card.is-open .pulse-team-ribbon-copy,
+  .pulse-team-card:focus-within .pulse-team-ribbon-copy {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    margin-top: 0.65rem;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pulse-team-card:hover .pulse-team-ribbon-copy {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      margin-top: 0.65rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-team-ribbon-copy {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      margin-top: 0.65rem;
     }
   }
 }

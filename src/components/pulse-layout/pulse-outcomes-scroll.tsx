@@ -58,13 +58,14 @@ const outcomes: Outcome[] = [
 const SCROLL_RUNWAY_VH =
   Math.max(outcomes.length - 1, 1) * PULSE_SCROLL_PER_ITEM_VH;
 
-type OutcomeColumnProps = {
+type OutcomePanelProps = {
   outcome: Outcome;
   index: number;
   progress: MotionValue<number>;
+  sizes: string;
 };
 
-function OutcomeColumn({ outcome, index, progress }: OutcomeColumnProps) {
+function OutcomePanel({ outcome, index, progress, sizes }: OutcomePanelProps) {
   const reduceMotion = useReducedMotion();
   const step = 1 / Math.max(outcomes.length - 1, 1);
   const enterStart = Math.max(0, (index - 1) * step);
@@ -82,40 +83,34 @@ function OutcomeColumn({ outcome, index, progress }: OutcomeColumnProps) {
   );
 
   return (
-    <div className="relative h-full min-w-0 overflow-hidden">
-      <motion.div
-        className="absolute inset-x-0 h-full will-change-transform"
-        style={reduceMotion ? { top: 0, opacity: 1 } : { top, opacity }}
-      >
-        <article
-          className="group relative h-full overflow-hidden bg-[#111313]"
-          aria-label={outcome.title}
+    <motion.article
+      className="absolute inset-0 overflow-hidden bg-[#111313]"
+      style={reduceMotion ? { top: 0, opacity: 1 } : { top, opacity }}
+      aria-label={outcome.title}
+    >
+      <Image
+        src={outcome.image}
+        alt={outcome.imageAlt}
+        fill
+        sizes={sizes}
+        className="object-cover"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/85"
+      />
+      <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 lg:p-5">
+        <span
+          className="mb-2 block text-[0.65rem] font-extrabold uppercase tracking-[0.16em] sm:text-[0.7rem]"
+          style={{ color: outcome.accent }}
         >
-          <Image
-            src={outcome.image}
-            alt={outcome.imageAlt}
-            fill
-            sizes="20vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/5 to-black/85"
-          />
-          <div className="absolute inset-x-0 bottom-0 p-2 sm:p-3 lg:p-5">
-            <span
-              className="mb-2 block text-[0.5rem] font-extrabold uppercase tracking-[0.14em] sm:text-[0.6rem]"
-              style={{ color: outcome.accent }}
-            >
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <h3 className="font-display text-[clamp(0.8rem,2.4vw,2.65rem)] uppercase leading-[0.88] tracking-[0.01em] text-white">
-              {outcome.title}
-            </h3>
-          </div>
-        </article>
-      </motion.div>
-    </div>
+          {String(index + 1).padStart(2, "0")}
+        </span>
+        <h3 className="font-display text-[clamp(1.7rem,7vw,2.65rem)] uppercase leading-[0.92] tracking-[0.01em] text-white lg:text-[clamp(0.95rem,2.2vw,2.65rem)]">
+          {outcome.title}
+        </h3>
+      </div>
+    </motion.article>
   );
 }
 
@@ -131,19 +126,39 @@ function OutcomesStage({ progress }: OutcomesStageProps) {
         className="absolute inset-0 bg-[radial-gradient(circle_at_72%_42%,rgba(19,255,114,0.12),transparent_32%),linear-gradient(180deg,#070909_0%,rgba(7,9,9,0.76)_42%,#070909_100%)]"
       />
 
-      <div className="pulse-container relative flex h-full w-full flex-col justify-center py-4 sm:py-6">
-        <div className="grid h-[min(90svh,74.4rem)] min-h-[33.8rem] grid-cols-5 gap-1.5 sm:gap-2">
+      <div className="pulse-container relative flex h-full w-full flex-col justify-center pb-5 pt-[calc(4.75rem+0.5rem)] sm:pb-6 sm:pt-[calc(5rem+0.75rem)]">
+        <p className="pulse-eyebrow mb-3 shrink-0 text-white/50 lg:mb-4">
+          What movement builds
+        </p>
+
+        {/* Mobile + tablet: one full-width outcome at a time */}
+        <div className="relative min-h-0 flex-1 overflow-hidden rounded-2xl lg:hidden">
           {outcomes.map((outcome, index) => (
-            <OutcomeColumn
+            <OutcomePanel
               key={outcome.title}
               outcome={outcome}
               index={index}
               progress={progress}
+              sizes="100vw"
             />
           ))}
         </div>
 
-        <div className="mt-6 hidden items-center justify-between text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/40 sm:flex">
+        {/* Desktop: five equal columns */}
+        <div className="hidden h-[min(78svh,62rem)] min-h-[28rem] grid-cols-5 gap-2 lg:grid">
+          {outcomes.map((outcome, index) => (
+            <div key={outcome.title} className="relative min-w-0 overflow-hidden">
+              <OutcomePanel
+                outcome={outcome}
+                index={index}
+                progress={progress}
+                sizes="20vw"
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 flex items-center justify-between text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/40 sm:mt-5">
           <span>Scroll to explore</span>
           <span>05 outcomes</span>
         </div>
@@ -152,7 +167,7 @@ function OutcomesStage({ progress }: OutcomesStageProps) {
   );
 }
 
-/** Five equal-width photo columns that rise into place one by one while pinned. */
+/** Photo outcomes — full-bleed on mobile, five-column runway on desktop. */
 export function PulseOutcomesScroll() {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
@@ -169,8 +184,40 @@ export function PulseOutcomesScroll() {
         data-pulse-snap-type="runway"
         aria-label="Movement outcomes"
       >
-        <div className="relative flex min-h-[100svh] items-center">
-          <OutcomesStage progress={scrollYProgress} />
+        <div className="pulse-container">
+          <p className="pulse-eyebrow text-white/50">What movement builds</p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {outcomes.map((outcome, index) => (
+              <article
+                key={outcome.title}
+                className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-[#111313] sm:aspect-[3/4]"
+                aria-label={outcome.title}
+              >
+                <Image
+                  src={outcome.image}
+                  alt={outcome.imageAlt}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
+                  className="object-cover"
+                />
+                <div
+                  aria-hidden
+                  className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"
+                />
+                <div className="absolute inset-x-0 bottom-0 p-4">
+                  <span
+                    className="mb-1 block text-[0.65rem] font-extrabold uppercase tracking-[0.16em]"
+                    style={{ color: outcome.accent }}
+                  >
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="font-display text-2xl uppercase leading-[0.92] text-white">
+                    {outcome.title}
+                  </h3>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
     );

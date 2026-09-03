@@ -16,8 +16,14 @@ export const PULSE_SCROLL_FOCUS_ITEM_VH = 58;
 /** Runway for a four-column grid phase (problems / solutions). */
 export const PULSE_GRID_PHASE_VH = 56;
 
-/** Runway per full-screen transition headline beat. */
-export const PULSE_BEAT_VH = 22;
+/** How long each PE headline stays fully on screen. */
+export const PULSE_HEADLINE_HOLD_VH = 110;
+
+/** Scroll distance used to slide from one PE headline to the next. */
+export const PULSE_HEADLINE_MOVE_VH = 100;
+
+/** @deprecated Use hold + move constants — kept for older runway math. */
+export const PULSE_BEAT_VH = PULSE_HEADLINE_HOLD_VH + PULSE_HEADLINE_MOVE_VH;
 
 /** First PE comparison beat — full-screen problems title. */
 export const PULSE_PE_TITLE_VH = 28;
@@ -167,19 +173,43 @@ export function pulseKeyframeOffsets(values: number[]): number[] {
   return offsets;
 }
 
-/** Fade window for full-screen transition beats. */
+/** Kept for Fast Refresh compatibility with older PE headline transforms. */
 export function pulseBeatWindow(
   beatStart: number,
   beatEnd: number,
 ): { fadeIn: number; holdStart: number; holdEnd: number; fadeOut: number } {
-  const span = beatEnd - beatStart;
-  const edge = span * 0.11;
+  const span = Math.max(beatEnd - beatStart, 0);
+  const edge = span * 0.1;
   return {
-    fadeIn: beatStart + edge,
-    holdStart: beatStart + edge * 1.2,
-    holdEnd: beatEnd - edge * 1.2,
-    fadeOut: beatEnd - edge,
+    fadeIn: beatStart + edge * 0.4,
+    holdStart: beatStart + edge,
+    holdEnd: beatEnd - edge,
+    fadeOut: beatEnd - edge * 0.4,
   };
+}
+
+/**
+ * Map 0–1 local headline progress onto slide indices 0…n-1.
+ * Pattern: hold, scroll to next, hold, scroll to next, hold.
+ */
+export function pulseHeadlineSlideKeyframes(slideCount: number): {
+  localInput: number[];
+  output: number[];
+} {
+  const moves = Math.max(slideCount - 1, 0);
+  const segments: number[] = [];
+  for (let index = 0; index < slideCount; index += 1) {
+    segments.push(PULSE_HEADLINE_HOLD_VH);
+    if (index < moves) segments.push(PULSE_HEADLINE_MOVE_VH);
+  }
+
+  const localInput = pulsePhaseBounds(segments);
+  const output: number[] = [];
+  for (let index = 0; index < slideCount; index += 1) {
+    output.push(index, index);
+  }
+
+  return { localInput, output };
 }
 
 /** Crossfade edge as a fraction of a phase span. */

@@ -13,15 +13,17 @@ import { peComparison } from "@/content/site";
 import { usePulseSmoothScrollProgress } from "@/hooks/use-pulse-smooth-scroll-progress";
 import { mediaPath } from "@/lib/media";
 import {
-  PULSE_BEAT_VH,
   PULSE_GRID_PHASE_VH,
+  PULSE_HEADLINE_HOLD_VH,
+  PULSE_HEADLINE_MOVE_VH,
   PULSE_PE_TITLE_VH,
-  pulseBeatWindow,
+  pulseHeadlineSlideKeyframes,
   pulseItemWindow,
   pulseKeyframeOffsets,
   pulsePhaseBounds,
   pulsePhaseFadeEdge,
   pulseSectionHeightVh,
+  pulseBeatWindow,
 } from "@/lib/pulse-scroll";
 
 type ComparisonPair = {
@@ -114,19 +116,28 @@ const transitionBeats = [
   },
 ] as const;
 
+const HEADLINE_RUNWAY_VH =
+  PULSE_HEADLINE_HOLD_VH * transitionBeats.length +
+  PULSE_HEADLINE_MOVE_VH * Math.max(transitionBeats.length - 1, 0);
+
 /** Title beat, problems grid, transition headlines, then solutions. */
 const COMPARISON_RUNWAY_VH =
-  PULSE_PE_TITLE_VH +
-  PULSE_GRID_PHASE_VH +
-  transitionBeats.length * PULSE_BEAT_VH +
-  PULSE_GRID_PHASE_VH;
+  PULSE_PE_TITLE_VH + PULSE_GRID_PHASE_VH + HEADLINE_RUNWAY_VH + PULSE_GRID_PHASE_VH;
 
 const [TITLE_START, TITLE_END, PROBLEMS_END, TRANSITION_END, SOLUTIONS_END] = pulsePhaseBounds([
   PULSE_PE_TITLE_VH,
   PULSE_GRID_PHASE_VH,
-  transitionBeats.length * PULSE_BEAT_VH,
+  HEADLINE_RUNWAY_VH,
   PULSE_GRID_PHASE_VH,
 ]);
+
+const HEADLINE_SLIDE = pulseHeadlineSlideKeyframes(transitionBeats.length);
+const HEADLINE_SLIDE_INPUT = pulseKeyframeOffsets(
+  HEADLINE_SLIDE.localInput.map(
+    (value) => PROBLEMS_END + value * (TRANSITION_END - PROBLEMS_END),
+  ),
+);
+void pulseBeatWindow;
 
 /** Discrete snap targets used by the homepage step controller. */
 export const PE_COMPARISON_TITLE_PROGRESS = TITLE_START;
@@ -181,7 +192,7 @@ function ComparisonColumn({
       <div
         className="pulse-pe-card group flex h-full min-h-0 min-w-0 flex-col bg-white text-[#0b0b0b]"
       >
-        <div className="relative min-h-[12rem] flex-1 overflow-hidden sm:min-h-[16rem] lg:min-h-[26rem]">
+        <div className="relative min-h-0 flex-1 overflow-hidden">
           <Image
             src={point.image}
             alt={point.imageAlt}
@@ -195,14 +206,14 @@ function ComparisonColumn({
           />
         </div>
 
-        <div className="flex shrink-0 flex-col gap-1.5 bg-white p-4 sm:gap-2 sm:p-5 lg:p-6">
+        <div className="flex shrink-0 flex-col gap-1.5 bg-white px-3 py-3 sm:gap-2 sm:px-4 sm:py-4 lg:px-5 lg:py-5">
           <div className="flex items-start gap-2">
             <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-[#0b0b0b]" aria-hidden />
-            <h3 className="text-[clamp(0.9rem,1.8vw,1.2rem)] font-bold leading-tight text-[#0b0b0b]">
+            <h3 className="text-[clamp(0.85rem,1.6vw,1.15rem)] font-bold leading-tight text-[#0b0b0b]">
               {point.title}
             </h3>
           </div>
-          <p className="pl-6 text-[clamp(0.78rem,1.25vw,0.95rem)] leading-snug text-[#0b0b0b]/70">
+          <p className="pl-6 text-[clamp(0.75rem,1.2vw,0.92rem)] leading-snug text-[#0b0b0b]/70">
             {point.description}
           </p>
         </div>
@@ -212,36 +223,19 @@ function ComparisonColumn({
 }
 
 type TransitionBeatProps = {
+  beat: (typeof transitionBeats)[number];
   beatIndex: number;
-  progress: MotionValue<number>;
+  slidePosition: MotionValue<number>;
+  reduceMotion: boolean | null;
 };
 
-function TransitionBeat({ beatIndex, progress }: TransitionBeatProps) {
-  const reduceMotion = useReducedMotion();
-  const beatCount = transitionBeats.length;
-  const transitionSpan = TRANSITION_END - PROBLEMS_END;
-  const beatSpan = transitionSpan / beatCount;
-  const beatStart = PROBLEMS_END + beatIndex * beatSpan;
-  const beatEnd = beatStart + beatSpan;
-  const { fadeIn, holdStart, holdEnd, fadeOut } = pulseBeatWindow(beatStart, beatEnd);
-
-  const opacity = useTransform(
-    progress,
-    pulseKeyframeOffsets([beatStart, fadeIn, holdStart, holdEnd, fadeOut, beatEnd]),
-    [0, 0.5, 1, 1, 0.5, 0],
-  );
-  const y = useTransform(
-    progress,
-    pulseKeyframeOffsets([beatStart, fadeIn, holdEnd, beatEnd]),
-    ["12%", "0%", "0%", "-8%"],
-  );
-
-  const beat = transitionBeats[beatIndex];
+function PulseHeadlineSlide({ beat, beatIndex, slidePosition, reduceMotion }: TransitionBeatProps) {
+  const y = useTransform(slidePosition, (position) => `${(beatIndex - position) * 100}%`);
 
   return (
     <motion.div
-      className="absolute inset-0 flex items-center justify-center px-6"
-      style={reduceMotion ? { opacity: beatIndex === 1 ? 1 : 0, y: 0 } : { opacity, y }}
+      className="absolute inset-0 flex items-center justify-center px-6 will-change-transform"
+      style={reduceMotion ? { opacity: beatIndex === 1 ? 1 : 0, y: 0 } : { y }}
       aria-hidden
     >
       <div
@@ -266,6 +260,46 @@ function TransitionBeat({ beatIndex, progress }: TransitionBeatProps) {
   );
 }
 
+type TransitionHeadlinesProps = {
+  progress: MotionValue<number>;
+};
+
+function TransitionHeadlines({ progress }: TransitionHeadlinesProps) {
+  const reduceMotion = useReducedMotion();
+  const problemsFade = pulsePhaseFadeEdge(TITLE_END, PROBLEMS_END);
+  const solutionsFade = pulsePhaseFadeEdge(TRANSITION_END, SOLUTIONS_END);
+  const slidePosition = useTransform(progress, HEADLINE_SLIDE_INPUT, HEADLINE_SLIDE.output);
+  (slidePosition as MotionValue<number> & { accelerate?: unknown }).accelerate = undefined;
+
+  const stackOpacity = useTransform(
+    progress,
+    pulseKeyframeOffsets([
+      PROBLEMS_END - problemsFade,
+      PROBLEMS_END,
+      TRANSITION_END,
+      TRANSITION_END + solutionsFade,
+    ]),
+    [0, 1, 1, 0],
+  );
+
+  return (
+    <motion.div
+      className="pointer-events-none absolute inset-0 z-[2] overflow-hidden"
+      style={reduceMotion ? undefined : { opacity: stackOpacity }}
+    >
+      {transitionBeats.map((beat, index) => (
+        <PulseHeadlineSlide
+          key={beat.lines[0].text}
+          beat={beat}
+          beatIndex={index}
+          slidePosition={slidePosition}
+          reduceMotion={reduceMotion}
+        />
+      ))}
+    </motion.div>
+  );
+}
+
 type ComparisonStageProps = {
   progress: MotionValue<number>;
 };
@@ -283,10 +317,10 @@ function ComparisonStage({ progress }: ComparisonStageProps) {
   const gridOpacity = useTransform(progress, titleRange, [0, 1]);
   const gridY = useTransform(progress, titleRange, ["14%", "0%"]);
   const titleLeft = useTransform(progress, titleRange, ["50%", "0%"]);
-  const titleTop = useTransform(progress, titleRange, ["50%", "12%"]);
+  const titleTop = useTransform(progress, titleRange, ["50%", "0%"]);
   const titleX = useTransform(progress, titleRange, ["-50%", "0%"]);
   const titleY = useTransform(progress, titleRange, ["-50%", "0%"]);
-  const titleScale = useTransform(progress, titleRange, [1, 0.56]);
+  const titleScale = useTransform(progress, titleRange, [1, 0.62]);
   const solutionsFade = pulsePhaseFadeEdge(TRANSITION_END, SOLUTIONS_END);
   const solutionsOpacity = useTransform(
     progress,
@@ -297,11 +331,6 @@ function ComparisonStage({ progress }: ComparisonStageProps) {
       SOLUTIONS_END,
     ]),
     [0, 1, 1, 1],
-  );
-  const scrollHintOpacity = useTransform(
-    progress,
-    pulseKeyframeOffsets([revealEnd, PROBLEMS_END, TRANSITION_END, TRANSITION_END + solutionsFade]),
-    [0, 1, 1, 0],
   );
   const backgroundTone = useTransform(
     progress,
@@ -323,59 +352,54 @@ function ComparisonStage({ progress }: ComparisonStageProps) {
         }
       >
         <div className="pulse-container relative h-full">
-          <motion.h2
-            className="font-display pointer-events-none absolute z-[3] w-max max-w-full origin-top-left uppercase leading-[0.92] tracking-[0.01em] text-white text-[clamp(2rem,7vw,5rem)]"
-            style={
-              reduceMotion
-                ? { left: "0%", top: "12%", x: 0, y: 0, scale: 0.56 }
-                : { left: titleLeft, top: titleTop, x: titleX, y: titleY, scale: titleScale }
-            }
-          >
-            Problems with <span className="pulse-accent-text">Traditional P.E.</span>
-          </motion.h2>
+          <div className="absolute inset-x-0 bottom-0 top-[4.75rem] sm:top-[5rem]">
+            <motion.h2
+              className="font-display pointer-events-none absolute z-[3] w-max max-w-full origin-top-left pt-[0.14em] uppercase leading-[0.92] tracking-[0.01em] text-white text-[clamp(1.85rem,6vw,4.25rem)]"
+              style={
+                reduceMotion
+                  ? { left: "0%", top: "0%", x: 0, y: 0, scale: 0.7 }
+                  : { left: titleLeft, top: titleTop, x: titleX, y: titleY, scale: titleScale }
+              }
+            >
+              Problems with <span className="pulse-accent-text">Traditional P.E.</span>
+            </motion.h2>
 
-          <motion.div
-            className="flex h-full flex-col justify-end pb-6 pt-[min(16vh,8.5rem)] sm:justify-end sm:pb-8 sm:pt-[min(18vh,9.5rem)]"
-            style={reduceMotion ? { opacity: 1, y: 0 } : { opacity: gridOpacity, y: gridY }}
-          >
-            <div className="grid min-h-[min(52svh,28rem)] grid-cols-2 gap-3 overflow-visible sm:gap-4 lg:min-h-[min(74svh,48rem)] lg:grid-cols-4">
-              {comparisonPairs.map((pair, index) => (
-                <ComparisonColumn
-                  key={pair.traditional.title}
-                  point={pair.traditional}
-                  index={index}
-                  progress={progress}
-                  mode="traditional"
-                  phaseStart={TITLE_START}
-                  phaseEnd={revealEnd}
-                  together
-                />
-              ))}
-            </div>
-          </motion.div>
+            <motion.div
+              className="flex h-full flex-col pb-5 pt-[min(7.25rem,22vw)] sm:pb-7 sm:pt-[min(8rem,12vw)]"
+              style={reduceMotion ? { opacity: 1, y: 0 } : { opacity: gridOpacity, y: gridY }}
+            >
+              <div className="grid min-h-0 flex-1 grid-cols-2 gap-3 overflow-visible sm:gap-4 lg:grid-cols-4">
+                {comparisonPairs.map((pair, index) => (
+                  <ComparisonColumn
+                    key={pair.traditional.title}
+                    point={pair.traditional}
+                    index={index}
+                    progress={progress}
+                    mode="traditional"
+                    phaseStart={TITLE_START}
+                    phaseEnd={revealEnd}
+                    together
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </div>
         </div>
       </motion.div>
 
-      {/* Transition headlines */}
-      <div className="pointer-events-none absolute inset-0 z-[2]">
-        {transitionBeats.map((_, index) => (
-          <TransitionBeat key={transitionBeats[index].lines[0].text} beatIndex={index} progress={progress} />
-        ))}
-      </div>
+      <TransitionHeadlines progress={progress} />
 
       {/* Solutions — Move Lab */}
       <motion.div
         className="absolute inset-0 flex flex-col"
         style={reduceMotion ? { opacity: 0, pointerEvents: "none" } : { opacity: solutionsOpacity }}
       >
-        <div className="pulse-container flex flex-1 flex-col justify-center py-6 sm:py-8">
-          <div className="overflow-hidden">
-            <h2 className="font-display mb-6 text-[clamp(2rem,6vw,4.5rem)] uppercase leading-[0.9] text-[#0b0b0b] sm:mb-8">
-              The <span className="pulse-accent-text">difference</span>
-            </h2>
-          </div>
+        <div className="pulse-container flex h-full min-h-0 flex-1 flex-col justify-start pb-6 pt-[calc(4.75rem+0.85rem)] sm:pb-8 sm:pt-[calc(5rem+1rem)]">
+          <h2 className="font-display mb-5 shrink-0 pt-[0.14em] text-[clamp(2rem,6vw,4.5rem)] uppercase leading-[0.92] text-[#0b0b0b] sm:mb-7">
+            The <span className="pulse-accent-text">difference</span>
+          </h2>
 
-          <div className="grid min-h-[min(62svh,40rem)] grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <div className="grid min-h-0 flex-1 grid-cols-2 gap-3 overflow-visible sm:gap-4 lg:grid-cols-4">
             {comparisonPairs.map((pair, index) => (
               <ComparisonColumn
                 key={pair.moveLab.title}
@@ -393,14 +417,6 @@ function ComparisonStage({ progress }: ComparisonStageProps) {
             {peComparison.moveLab.title}
           </p>
         </div>
-      </motion.div>
-
-      <motion.div
-        className="pointer-events-none absolute inset-x-0 bottom-6 hidden justify-between px-6 text-[0.65rem] font-bold uppercase tracking-[0.2em] text-white/35 sm:flex sm:px-10"
-        style={reduceMotion ? undefined : { opacity: scrollHintOpacity }}
-      >
-        <span>Scroll to compare</span>
-        <span>04 points</span>
       </motion.div>
     </motion.div>
   );

@@ -298,7 +298,7 @@ function BenefitsBranchFinale({ progress }: BenefitsBranchProps) {
 
   return (
     <motion.div
-      className="absolute inset-0 z-[4] flex flex-col px-0 pb-4 pt-2 sm:pb-6 sm:pt-3"
+      className="absolute inset-0 z-[4] flex flex-col overflow-visible px-0 pb-4 pt-1 sm:pb-6 sm:pt-2"
       style={reduceMotion ? { opacity: 1 } : { opacity: stageOpacity }}
       aria-label="Benefits for your school"
     >
@@ -308,7 +308,7 @@ function BenefitsBranchFinale({ progress }: BenefitsBranchProps) {
           style={reduceMotion ? undefined : { opacity: titleOpacity }}
         >
           <p className="pulse-eyebrow text-[var(--p-accent)]">The outcome</p>
-          <h3 className="font-display mt-2 max-w-[18ch] text-[clamp(1.35rem,6.5vw,2.45rem)] uppercase leading-[1.05] tracking-[0.01em] text-white sm:max-w-none">
+          <h3 className="pulse-how-heading font-display mt-2 max-w-4xl uppercase text-white">
             Benefits for <span className="pulse-accent-text">your school</span>
           </h3>
         </motion.div>
@@ -638,19 +638,19 @@ function HowWeWorkStage({ progress, showIntro = true }: HowWeWorkStageProps) {
   );
 
   return (
-    <div className="relative h-full w-full py-5 sm:py-8">
+    <div className="relative h-full w-full pb-5 pt-[calc(4.75rem+0.75rem)] sm:pb-8 sm:pt-[calc(5rem+1rem)]">
       <div ref={viewportRef} className="pulse-container relative h-full min-h-0 overflow-hidden">
         <motion.div
-          className="absolute inset-0 flex flex-col"
+          className="absolute inset-0 flex flex-col overflow-visible"
           style={reduceMotion ? undefined : { opacity: stepsLayerOpacity }}
         >
           {showIntro ? (
             <motion.header
-              className="relative z-[2] mb-3 shrink-0 sm:mb-5"
+              className="relative z-[2] mb-3 shrink-0 overflow-visible sm:mb-5"
               style={reduceMotion ? undefined : { opacity: introOpacity }}
             >
               <p className="pulse-eyebrow text-white/50">How we work</p>
-              <h2 className="font-display mt-2 max-w-4xl text-[clamp(1.7rem,6vw,4rem)] uppercase leading-[0.92] text-white sm:mt-3">
+              <h2 className="pulse-how-heading font-display mt-2 max-w-4xl uppercase text-white sm:mt-3">
                 From first visit to <span className="pulse-accent-text">lasting partnership</span>
               </h2>
             </motion.header>
@@ -753,7 +753,7 @@ function ReducedMotionHowWeWork() {
 
         <div className="mt-16 border-t border-white/10 pt-12">
           <p className="pulse-eyebrow text-[var(--p-accent)]">The outcome</p>
-          <h3 className="font-display mt-3 text-[clamp(1.8rem,4vw,3rem)] uppercase leading-[0.92] text-white">
+          <h3 className="pulse-how-heading font-display mt-3 max-w-4xl uppercase text-white">
             Benefits for <span className="pulse-accent-text">your school</span>
           </h3>
           <div className="mt-8 grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-5">
