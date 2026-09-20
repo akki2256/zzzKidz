@@ -6,6 +6,7 @@ import { MediaSlideshow } from "@/components/shared/media-slideshow";
 import { PageHero } from "@/components/shared/page-hero";
 import { Reveal } from "@/components/shared/reveal";
 import { ActiveAboutPage } from "@/components/active-layout/pages/active-about-page";
+import { NoirStubPage } from "@/components/noir-layout/noir-stub-page";
 import { PulseAboutPage } from "@/components/pulse-layout/pages/pulse-about-page";
 import { StudioAboutPage } from "@/components/studio-layout/pages/studio-about-page";
 import { MultiLayoutPage } from "@/components/theme/multi-layout-page";
@@ -30,6 +31,7 @@ export default function AboutPage() {
       studio={<StudioAboutPage />}
       active={<ActiveAboutPage />}
       pulse={<PulseAboutPage />}
+      noir={<NoirStubPage title="About" />}
     />
   );
 }

@@ -3,6 +3,7 @@ import { BrandMark } from "@/components/shared/brand-mark";
 import { Container } from "@/components/shared/container";
 import { CtaLink } from "@/components/shared/cta-link";
 import { NavLink } from "@/components/shared/nav-link";
+import { PhoneLink, SocialLinks } from "@/components/shared/social-links";
 import { navLinks, siteConfig } from "@/content/site";
 
 export function SiteFooter() {
@@ -23,6 +24,7 @@ export function SiteFooter() {
           <div className="mt-6">
             <CtaLink href={siteConfig.cta.primaryHref}>{siteConfig.cta.primary}</CtaLink>
           </div>
+          <SocialLinks className="mt-6" tone="original" />
         </div>
 
         <div>
@@ -54,8 +56,8 @@ export function SiteFooter() {
                 {siteConfig.contact.email}
               </a>
             </li>
-            <li className="rounded-md border border-dashed border-border px-3 py-2 text-xs">
-              Phone: {siteConfig.contact.phonePlaceholder}
+            <li>
+              <PhoneLink className="inline-flex items-center gap-2 transition-colors hover:text-accent" />
             </li>
             <li className="pt-2 text-foreground">
               One partner. Complete solution.

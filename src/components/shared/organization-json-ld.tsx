@@ -11,7 +11,13 @@ export function OrganizationJsonLd() {
     image: `${siteConfig.url}${siteConfig.logo}`,
     description: siteConfig.description,
     email: siteConfig.contact.email,
+    telephone: `+${siteConfig.contact.phoneE164}`,
     slogan: siteConfig.slogan,
+    sameAs: [
+      siteConfig.social.instagram,
+      siteConfig.social.facebook,
+      siteConfig.social.youtube,
+    ],
   };
 
   return (

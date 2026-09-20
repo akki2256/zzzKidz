@@ -7,6 +7,7 @@ import { GalleryGrid } from "@/components/sections/gallery-grid";
 import { ActiveGalleryPage } from "@/components/active-layout/pages/active-gallery-page";
 import { PulseGalleryPage } from "@/components/pulse-layout/pages/pulse-gallery-page";
 import { StudioGalleryPage } from "@/components/studio-layout/pages/studio-gallery-page";
+import { NoirStubPage } from "@/components/noir-layout/noir-stub-page";
 import { MultiLayoutPage } from "@/components/theme/multi-layout-page";
 import { galleryImages, heroSlides } from "@/content/media";
 
@@ -24,6 +25,7 @@ export default function GalleryPage() {
       studio={<StudioGalleryPage />}
       active={<ActiveGalleryPage />}
       pulse={<PulseGalleryPage />}
+      noir={<NoirStubPage title="Gallery" />}
     />
   );
 }

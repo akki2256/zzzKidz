@@ -2,6 +2,7 @@ import { Mail, Phone } from "lucide-react";
 import { ContactForm } from "@/components/sections/contact-form";
 import { ActiveItemGrid, ActiveSection } from "@/components/active-layout/active-blocks";
 import { ActivePageHero } from "@/components/active-layout/active-page-hero";
+import { PhoneLink, SocialLinks } from "@/components/shared/social-links";
 import { heroSlides } from "@/content/media";
 import { siteConfig, trustPillars } from "@/content/site";
 
@@ -38,9 +39,12 @@ export function ActiveContactPage() {
               </div>
               <div className="flex items-center gap-3 rounded-xl bg-white px-4 py-3 shadow-sm">
                 <Phone className="h-4 w-4 text-[#7c5cbf]" aria-hidden />
-                <dd className="text-sm text-[#172c5f]/70">{siteConfig.contact.phonePlaceholder}</dd>
+                <dd>
+                  <PhoneLink className="text-sm font-bold text-[#172c5f] hover:underline" />
+                </dd>
               </div>
             </dl>
+            <SocialLinks className="mt-6" tone="original" />
           </div>
 
           <div className="rounded-2xl bg-white p-6 shadow-md sm:p-8">

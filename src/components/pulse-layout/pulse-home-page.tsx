@@ -1,4 +1,5 @@
 import { PulseActivitiesScroll } from "@/components/pulse-layout/pulse-activities-scroll";
+import { PulseContactSection } from "@/components/pulse-layout/pulse-contact-section";
 import { PulseHero } from "@/components/pulse-layout/pulse-hero";
 import { PulseHomeScrollRoot } from "@/components/pulse-layout/pulse-home-scroll-root";
 import { PulseHowWeWorkScroll } from "@/components/pulse-layout/pulse-how-we-work-scroll";
@@ -31,6 +32,7 @@ export function PulseHomePage() {
         <PulseActivitiesScroll />
         <PulseHowWeWorkScroll />
         <PulseTeamSection />
+        <PulseContactSection />
       </div>
     </PulseHomeScrollRoot>
   );

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { PhoneLink, SocialLinks } from "@/components/shared/social-links";
 import { siteConfig } from "@/content/site";
 
 const exploreLinks = [
@@ -13,11 +14,11 @@ const exploreLinks = [
 const companyLinks = [
   { href: "/about", label: "About" },
   { href: "/why-us", label: "Why Us" },
-  { href: "/contact", label: "Contact" },
+  { href: "/#pulse-contact", label: "Contact" },
 ] as const;
 
 const schoolLinks = [
-  { href: "/contact", label: "Partner With Us" },
+  { href: "/#pulse-contact", label: "Partner With Us" },
   { href: "/how-it-works", label: "Setup Process" },
   { href: "/programs", label: "Explore the Move Lab" },
 ] as const;
@@ -78,6 +79,8 @@ export function PulseFooter() {
                 {siteConfig.cta.secondary}
               </Link>
             </div>
+
+            <SocialLinks className="mt-8" tone="pulse" />
           </div>
 
           <nav aria-label="Footer" className="grid gap-10 sm:grid-cols-3">
@@ -114,9 +117,7 @@ export function PulseFooter() {
 
           <p className="inline-flex items-start gap-2.5 text-sm text-white/65">
             <Phone className="mt-0.5 h-4 w-4 shrink-0 text-[var(--p-accent)]" aria-hidden />
-            <span>
-              {siteConfig.contact.phone ?? siteConfig.contact.phonePlaceholder}
-            </span>
+            <PhoneLink className="transition-colors hover:text-[var(--p-accent)]" />
           </p>
 
           <p className="inline-flex items-start gap-2.5 text-sm text-white/65">

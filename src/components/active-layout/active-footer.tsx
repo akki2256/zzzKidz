@@ -1,28 +1,35 @@
 import Link from "next/link";
+import { PhoneLink, SocialLinks } from "@/components/shared/social-links";
 import { siteConfig } from "@/content/site";
 
 export function ActiveFooter() {
   return (
     <footer className="bg-[#3aa8a6] text-white">
       <div className="active-container flex flex-col gap-8 py-10 sm:flex-row sm:items-center sm:justify-between">
-        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[11px] font-extrabold uppercase tracking-[0.12em]">
-          <Link href="/about" className="hover:underline">
-            About
-          </Link>
-          <Link href="/programs" className="hover:underline">
-            Programs
-          </Link>
-          <Link href="/how-it-works" className="hover:underline">
-            How It Works
-          </Link>
-          <Link href="/contact" className="hover:underline">
-            Contact
-          </Link>
-        </nav>
+        <div>
+          <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[11px] font-extrabold uppercase tracking-[0.12em]">
+            <Link href="/about" className="hover:underline">
+              About
+            </Link>
+            <Link href="/programs" className="hover:underline">
+              Programs
+            </Link>
+            <Link href="/how-it-works" className="hover:underline">
+              How It Works
+            </Link>
+            <Link href="/contact" className="hover:underline">
+              Contact
+            </Link>
+          </nav>
+          <SocialLinks className="mt-6" tone="active" />
+        </div>
 
         <div className="text-center sm:text-right">
           <p className="active-display text-xl text-white">{siteConfig.name}</p>
           <p className="mt-0.5 text-xs font-bold tracking-wide text-white/80">Kids Move Lab</p>
+          <PhoneLink className="mt-2 block text-sm font-bold text-white/90 hover:underline">
+            {siteConfig.contact.phone}
+          </PhoneLink>
           <Link href={siteConfig.cta.primaryHref} className="active-btn mt-4 inline-flex">
             {siteConfig.cta.primary}
           </Link>

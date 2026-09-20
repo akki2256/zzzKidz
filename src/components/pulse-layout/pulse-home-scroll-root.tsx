@@ -39,6 +39,65 @@ function LenisMenuSync() {
   return null;
 }
 
+/** Smooth-scroll to in-page anchors (Contact menu → #pulse-contact). */
+function LenisHashScroll() {
+  const lenis = useLenis();
+
+  useEffect(() => {
+    if (!lenis) return;
+
+    const scrollToHash = (hash: string) => {
+      if (!hash || hash === "#") return;
+      const target = document.querySelector(hash);
+      if (!(target instanceof HTMLElement)) return;
+      lenis.scrollTo(target, { offset: -88, duration: 1.15 });
+    };
+
+    const onHashChange = () => scrollToHash(window.location.hash);
+
+    const frame = window.requestAnimationFrame(() => onHashChange());
+
+    window.addEventListener("hashchange", onHashChange);
+
+    const onClick = (event: MouseEvent) => {
+      const link = (event.target as Element | null)?.closest?.(
+        'a[href^="#"], a[href^="/#"]',
+      );
+      if (!(link instanceof HTMLAnchorElement)) return;
+
+      const href = link.getAttribute("href");
+      if (!href) return;
+
+      const hash = href.startsWith("/#")
+        ? href.slice(1)
+        : href.startsWith("#")
+          ? href
+          : null;
+      if (!hash || hash === "#") return;
+
+      if (hash === "#pulse-after-hero") return;
+
+      if (href.startsWith("#") || (href.startsWith("/#") && window.location.pathname === "/")) {
+        event.preventDefault();
+        if (window.location.hash !== hash) {
+          window.history.pushState(null, "", hash);
+        }
+        scrollToHash(hash);
+      }
+    };
+
+    document.addEventListener("click", onClick);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("hashchange", onHashChange);
+      document.removeEventListener("click", onClick);
+    };
+  }, [lenis]);
+
+  return null;
+}
+
 export function PulseHomeScrollRoot({ children }: PulseHomeScrollRootProps) {
   return (
     <ReactLenis
@@ -53,6 +112,7 @@ export function PulseHomeScrollRoot({ children }: PulseHomeScrollRootProps) {
     >
       <PulseZzzGateProvider>
         <LenisMenuSync />
+        <LenisHashScroll />
         {children}
       </PulseZzzGateProvider>
     </ReactLenis>

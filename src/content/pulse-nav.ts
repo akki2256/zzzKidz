@@ -67,7 +67,7 @@ export const pulseNavPanels: PulseNavPanel[] = [
     ),
   },
   {
-    href: "/contact",
+    href: "/#pulse-contact",
     label: "Contact",
     blurb: "Partner with us to bring a Move Lab to your school.",
     image: img(

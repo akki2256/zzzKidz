@@ -15,9 +15,15 @@ export const siteConfig = {
   logo: "/images/brand/zzzkidz-logo.jpg",
   contact: {
     email: "connect@triplezkidsmovelab.com",
-    /** Catalogue listed a placeholder number — replace with real phone before production. */
-    phone: null as string | null,
-    phonePlaceholder: "[PHONE TO BE CONFIRMED]",
+    phone: "+91 98372 71586",
+    /** Digits only with country code — used for tel: and WhatsApp deep links. */
+    phoneE164: "919837271586",
+    whatsapp: "919837271586",
+  },
+  social: {
+    instagram: "https://www.instagram.com/zzzfitnessclub.sre/",
+    facebook: "https://www.facebook.com/zzzfitnessclub",
+    youtube: "https://www.youtube.com/@zzz_fitness",
   },
   cta: {
     primary: "Partner With Us",

@@ -1,12 +1,9 @@
-import { PulseStubPage } from "@/components/pulse-layout/pulse-stub-page";
-import { heroSlides } from "@/content/media";
+import { PulseContactSection } from "@/components/pulse-layout/pulse-contact-section";
 
 export function PulseContactPage() {
   return (
-    <PulseStubPage
-      title="Contact"
-      description="Enquire about bringing Triple Z Kids Move Lab to your school. Partner with ZZZKidz for a complete fitness solution."
-      image={heroSlides[0]}
-    />
+    <div className="bg-[#070909] pt-16 sm:pt-[4.5rem]">
+      <PulseContactSection headingLevel="h1" />
+    </div>
   );
 }

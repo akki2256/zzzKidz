@@ -11,7 +11,7 @@ import { heroContent } from "@/content/site";
 const footerLinks = [
   { href: "/programs", label: "Explore the Move Lab" },
   { href: "/how-it-works", label: "How It Works" },
-  { href: "/contact", label: "Partner With Us" },
+  { href: "/#pulse-contact", label: "Partner With Us" },
 ] as const;
 
 /** Full-bleed video hero — Les Mills–inspired athletic composition. */

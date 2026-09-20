@@ -89,22 +89,51 @@ export function PulseStackedMenu({ open, onClose }: PulseStackedMenuProps) {
           </div>
 
           {/* Desktop / tablet: vertical stacked panels */}
-          <div className="relative hidden min-h-0 flex-1 gap-2 px-2 pb-3 md:flex lg:gap-3 lg:px-3">
+          <div
+            className="relative hidden min-h-0 flex-1 gap-2 px-2 pb-3 md:flex lg:gap-3 lg:px-3"
+            onMouseLeave={() => setActiveIndex(-1)}
+          >
             {pulseNavPanels.map((panel, index) => {
               const isActive = index === activeIndex;
+              const flexGrow = reduceMotion
+                ? isActive
+                  ? 2.6
+                  : 1
+                : isActive
+                  ? 3.15
+                  : activeIndex >= 0
+                    ? 0.72
+                    : 1;
+
               return (
                 <motion.div
                   key={panel.href}
                   className={cn(
                     "pulse-stack-card relative flex min-w-0 flex-col overflow-hidden",
-                    isActive ? "pulse-stack-card-active flex-[1.65]" : "flex-1",
+                    isActive && "pulse-stack-card-active",
                   )}
+                  style={{ flexBasis: 0 }}
                   initial={reduceMotion ? false : { x: -28, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
+                  animate={{
+                    x: 0,
+                    opacity: 1,
+                    flexGrow,
+                  }}
                   transition={{
-                    duration: 0.42,
-                    delay: reduceMotion ? 0 : index * 0.045,
-                    ease: easeOutExpo,
+                    x: {
+                      duration: 0.42,
+                      delay: reduceMotion ? 0 : index * 0.045,
+                      ease: easeOutExpo,
+                    },
+                    opacity: {
+                      duration: 0.42,
+                      delay: reduceMotion ? 0 : index * 0.045,
+                      ease: easeOutExpo,
+                    },
+                    flexGrow: {
+                      duration: reduceMotion ? 0 : 0.48,
+                      ease: easeOutExpo,
+                    },
                   }}
                   onMouseEnter={() => setActiveIndex(index)}
                   onFocusCapture={() => setActiveIndex(index)}
@@ -128,7 +157,7 @@ export function PulseStackedMenu({ open, onClose }: PulseStackedMenuProps) {
                             src={panel.image.src}
                             alt={panel.image.alt}
                             fill
-                            sizes="(max-width: 1024px) 28vw, 18vw"
+                            sizes="(max-width: 1024px) 40vw, 28vw"
                             className="object-cover opacity-100"
                           />
                           <div
@@ -162,7 +191,7 @@ export function PulseStackedMenu({ open, onClose }: PulseStackedMenuProps) {
                           exit={reduceMotion ? undefined : { opacity: 0, y: 8 }}
                           transition={{ duration: 0.28, ease: easeOutExpo }}
                         >
-                          <p className="text-[12px] leading-relaxed text-white drop-shadow-[0_1px_6px_rgba(0,0,0,0.7)] sm:text-[13px]">
+                          <p className="max-w-[16rem] text-[12px] leading-relaxed text-white drop-shadow-[0_1px_6px_rgba(0,0,0,0.7)] sm:text-[13px]">
                             {panel.blurb}
                           </p>
                           <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[var(--p-accent)] drop-shadow-[0_1px_6px_rgba(0,0,0,0.55)]">
@@ -282,7 +311,7 @@ export function PulseStackedMenu({ open, onClose }: PulseStackedMenuProps) {
             <div className="mx-3 mb-3 hidden items-center justify-between gap-6 rounded-2xl bg-[var(--p-panel)] px-8 py-4 backdrop-blur-xl lg:flex">
               <p className="max-w-xl text-sm text-white/55">{active.blurb}</p>
               <Link
-                href={siteConfig.cta.primaryHref}
+                href="/#pulse-contact"
                 onClick={onClose}
                 className="pulse-btn shrink-0"
               >

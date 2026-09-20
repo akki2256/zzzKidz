@@ -9,6 +9,7 @@ import { Reveal } from "@/components/shared/reveal";
 import { ActiveProgramsPage } from "@/components/active-layout/pages/active-programs-page";
 import { PulseProgramsPage } from "@/components/pulse-layout/pages/pulse-programs-page";
 import { StudioProgramsPage } from "@/components/studio-layout/pages/studio-programs-page";
+import { NoirStubPage } from "@/components/noir-layout/noir-stub-page";
 import { MultiLayoutPage } from "@/components/theme/multi-layout-page";
 import { galleryImages, heroSlides } from "@/content/media";
 import { activities, keyActivities, movementLiteracy, zones } from "@/content/site";
@@ -127,6 +128,7 @@ export default function ProgramsPage() {
       studio={<StudioProgramsPage />}
       active={<ActiveProgramsPage />}
       pulse={<PulseProgramsPage />}
+      noir={<NoirStubPage title="Programs" />}
     />
   );
 }

@@ -92,7 +92,7 @@ export function PulseHeader({ overlay = true }: PulseHeaderProps) {
               <ThemeSelector compact />
             </div>
             <Link
-              href={siteConfig.cta.primaryHref}
+              href="/#pulse-contact"
               className="pulse-btn hidden sm:inline-flex"
             >
               {siteConfig.cta.primary}

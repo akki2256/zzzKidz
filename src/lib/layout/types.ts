@@ -1,10 +1,10 @@
-export type SiteLayout = "original" | "studio" | "active" | "pulse";
+export type SiteLayout = "original" | "studio" | "active" | "pulse" | "noir";
 
 export const LAYOUT_COOKIE = "site-layout";
 export const LAYOUT_STORAGE_KEY = "site-layout";
-export const DEFAULT_LAYOUT: SiteLayout = "original";
+export const DEFAULT_LAYOUT: SiteLayout = "pulse";
 
-export const SITE_LAYOUTS: SiteLayout[] = ["original", "studio", "active", "pulse"];
+export const SITE_LAYOUTS: SiteLayout[] = ["original", "studio", "active", "pulse", "noir"];
 
 export const LAYOUT_OPTIONS: { value: SiteLayout; label: string; description: string }[] = [
   {
@@ -27,11 +27,20 @@ export const LAYOUT_OPTIONS: { value: SiteLayout; label: string; description: st
     label: "Pulse",
     description: "High-energy athletic video-hero layout",
   },
+  {
+    value: "noir",
+    label: "Noir",
+    description: "Dark editorial one-page layout with sticky section tiles",
+  },
 ];
 
 export function isSiteLayout(value: string | undefined | null): value is SiteLayout {
   return (
-    value === "original" || value === "studio" || value === "active" || value === "pulse"
+    value === "original" ||
+    value === "studio" ||
+    value === "active" ||
+    value === "pulse" ||
+    value === "noir"
   );
 }
 

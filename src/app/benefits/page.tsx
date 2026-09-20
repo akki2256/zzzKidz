@@ -6,6 +6,7 @@ import { Reveal } from "@/components/shared/reveal";
 import { ActiveBenefitsPage } from "@/components/active-layout/pages/active-benefits-page";
 import { PulseBenefitsPage } from "@/components/pulse-layout/pages/pulse-benefits-page";
 import { StudioBenefitsPage } from "@/components/studio-layout/pages/studio-benefits-page";
+import { NoirStubPage } from "@/components/noir-layout/noir-stub-page";
 import { MultiLayoutPage } from "@/components/theme/multi-layout-page";
 import {
   foundationOutcomes,
@@ -41,6 +42,7 @@ export default function BenefitsPage() {
       studio={<StudioBenefitsPage />}
       active={<ActiveBenefitsPage />}
       pulse={<PulseBenefitsPage />}
+      noir={<NoirStubPage title="Benefits" />}
     />
   );
 }

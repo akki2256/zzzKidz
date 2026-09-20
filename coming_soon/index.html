@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="ZZZKIDZ is coming soon. Our new website is currently under development."
+    />
+    <meta property="og:title" content="ZZZKIDZ | Coming Soon" />
+    <meta
+      property="og:description"
+      content="ZZZKIDZ is coming soon. Our new website is currently under development."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="assets/zzzkidz-logo.jpg" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="ZZZKIDZ | Coming Soon" />
+    <meta
+      name="twitter:description"
+      content="ZZZKIDZ is coming soon. Our new website is currently under development."
+    />
+    <title>ZZZKIDZ | Coming Soon</title>
+    <link rel="icon" href="assets/zzzkidz-logo.jpg" type="image/jpeg" />
+    <link rel="apple-touch-icon" href="assets/zzzkidz-logo.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --p-black: #000000;
+        --p-ink: #0b0b0b;
+        --p-white: #ffffff;
+        --p-accent: #13ff72;
+        --p-accent-hover: #ffffff;
+        --p-accent-glow: rgba(19, 255, 114, 0.45);
+        --p-accent-soft: rgba(19, 255, 114, 0.14);
+        --p-on-accent: #0b0b0b;
+        --p-dim: rgba(255, 255, 255, 0.62);
+        --p-line: rgba(255, 255, 255, 0.14);
+        --p-panel: rgba(120, 120, 120, 0.22);
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --safe-top: env(safe-area-inset-top, 0px);
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+        --safe-left: env(safe-area-inset-left, 0px);
+        --safe-right: env(safe-area-inset-right, 0px);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        font-family: Manrope, ui-sans-serif, system-ui, sans-serif;
+        background: var(--p-black);
+        color: var(--p-white);
+        line-height: 1.5;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .page {
+        position: relative;
+        isolation: isolate;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding:
+          calc(1.75rem + var(--safe-top))
+          calc(1.25rem + var(--safe-right))
+          calc(1.75rem + var(--safe-bottom))
+          calc(1.25rem + var(--safe-left));
+      }
+
+      .page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background:
+          radial-gradient(ellipse 80% 55% at 50% -10%, rgba(19, 255, 114, 0.16), transparent 55%),
+          radial-gradient(ellipse 70% 50% at 50% 110%, rgba(19, 255, 114, 0.08), transparent 50%),
+          linear-gradient(180deg, #0b0b0b 0%, #000000 45%, #050505 100%);
+      }
+
+      .page::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        opacity: 0.35;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 22px 22px;
+        mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
+        pointer-events: none;
+      }
+
+      .shell {
+        width: min(100%, 26rem);
+        text-align: center;
+      }
+
+      .logo-wrap {
+        position: relative;
+        display: inline-flex;
+        margin: 0 auto 1.75rem;
+      }
+
+      .logo-wrap::before {
+        content: "";
+        position: absolute;
+        inset: -14%;
+        border-radius: 50%;
+        background: radial-gradient(circle, var(--p-accent-glow) 0%, transparent 68%);
+        opacity: 0.55;
+        filter: blur(8px);
+        pointer-events: none;
+      }
+
+      .logo {
+        position: relative;
+        display: block;
+        width: clamp(11.5rem, 56vw, 16rem);
+        height: auto;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.08),
+          0 22px 56px rgba(0, 0, 0, 0.55),
+          0 0 52px rgba(19, 255, 114, 0.22);
+      }
+
+      .brand {
+        margin: 0 0 0.95rem;
+        font-family: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+        font-weight: 400;
+        font-size: clamp(1.85rem, 7.5vw, 2.85rem);
+        letter-spacing: 0.04em;
+        line-height: 1;
+        text-transform: uppercase;
+        text-wrap: balance;
+      }
+
+      .brand-accent {
+        color: var(--p-accent);
+        text-shadow: 0 0 28px rgba(19, 255, 114, 0.35);
+      }
+
+      .brand-rest {
+        color: var(--p-white);
+      }
+
+      .headline {
+        margin: 0 0 0.9rem;
+        font-family: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+        font-weight: 400;
+        font-size: clamp(1.65rem, 7.2vw, 2.35rem);
+        letter-spacing: 0.02em;
+        line-height: 1.05;
+        text-transform: uppercase;
+        text-wrap: balance;
+      }
+
+      .support {
+        margin: 0 auto 2rem;
+        max-width: 24rem;
+        color: var(--p-dim);
+        font-size: clamp(0.95rem, 3.6vw, 1.0625rem);
+        font-weight: 500;
+        line-height: 1.55;
+        text-wrap: pretty;
+      }
+
+      .actions {
+        display: grid;
+        gap: 0.75rem;
+        width: 100%;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.65rem;
+        width: 100%;
+        min-height: 3.25rem;
+        padding: 0.9rem 1.35rem;
+        border-radius: 999px;
+        border: 1px solid transparent;
+        font-family: inherit;
+        font-size: 0.8125rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+          background 0.2s var(--ease-out),
+          color 0.2s var(--ease-out),
+          border-color 0.2s var(--ease-out),
+          transform 0.2s var(--ease-out),
+          box-shadow 0.2s var(--ease-out);
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+
+      .btn:focus-visible {
+        outline: 2px solid var(--p-accent);
+        outline-offset: 3px;
+      }
+
+      .btn-primary {
+        background: var(--p-accent);
+        color: var(--p-on-accent);
+        box-shadow: 0 10px 28px rgba(19, 255, 114, 0.28);
+      }
+
+      .btn-primary:hover {
+        background: var(--p-accent-hover);
+        color: var(--p-on-accent);
+        box-shadow: 0 12px 32px rgba(255, 255, 255, 0.18);
+      }
+
+      .btn-primary:active {
+        transform: scale(0.985);
+      }
+
+      .btn-secondary {
+        background: var(--p-panel);
+        color: var(--p-white);
+        border-color: var(--p-line);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .btn-secondary:hover {
+        border-color: rgba(255, 255, 255, 0.32);
+        background: rgba(150, 150, 150, 0.28);
+      }
+
+      .btn-secondary:active {
+        transform: scale(0.985);
+      }
+
+      .btn svg {
+        width: 1.15rem;
+        height: 1.15rem;
+        flex-shrink: 0;
+      }
+
+      .footnote {
+        margin: 1.75rem 0 0;
+        color: rgba(255, 255, 255, 0.42);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      /* Entrance — restrained, premium */
+      .reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        animation: rise 0.7s var(--ease-out) forwards;
+      }
+
+      .reveal-1 {
+        animation-delay: 0.05s;
+      }
+      .reveal-2 {
+        animation-delay: 0.16s;
+      }
+      .reveal-3 {
+        animation-delay: 0.28s;
+      }
+      .reveal-4 {
+        animation-delay: 0.4s;
+      }
+      .reveal-5 {
+        animation-delay: 0.52s;
+      }
+      .reveal-6 {
+        animation-delay: 0.64s;
+      }
+
+      @keyframes rise {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (min-width: 640px) {
+        .page {
+          padding:
+            calc(2.5rem + var(--safe-top))
+            calc(2rem + var(--safe-right))
+            calc(2.5rem + var(--safe-bottom))
+            calc(2rem + var(--safe-left));
+        }
+
+        .shell {
+          width: min(100%, 30rem);
+        }
+
+        .logo-wrap {
+          margin-bottom: 2rem;
+        }
+
+        .support {
+          margin-bottom: 2.25rem;
+        }
+
+        .actions {
+          gap: 0.85rem;
+        }
+
+        .btn {
+          min-height: 3.4rem;
+          font-size: 0.84375rem;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .shell {
+          width: min(100%, 32rem);
+        }
+
+        .logo {
+          width: 17.5rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .reveal {
+          opacity: 1;
+          transform: none;
+          animation: none;
+        }
+
+        .btn,
+        .btn-primary,
+        .btn-secondary {
+          transition: none;
+        }
+
+        .btn:active {
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="shell">
+        <div class="logo-wrap reveal reveal-1">
+          <img
+            class="logo"
+            src="assets/zzzkidz-logo.jpg"
+            alt="ZZZ Kidz Move Lab logo"
+            width="512"
+            height="512"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </div>
+
+        <p class="brand reveal reveal-2">
+          <span class="brand-accent">ZZZ</span>
+          <span class="brand-rest"> Kidz Move Lab</span>
+        </p>
+
+        <h1 class="headline reveal reveal-3">Something Exciting Is Coming Soon</h1>
+
+        <p class="support reveal reveal-4">
+          Our new website will be live shortly. 
+          </p> <p class="support reveal reveal-4">In the meantime, please call us or connect on
+          WhatsApp — we would be delighted to assist you.
+        </p>
+
+        <div class="actions reveal reveal-5">
+          <a class="btn btn-primary" href="tel:+919837271586">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.81.36 1.6.68 2.35a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.75.32 1.54.55 2.35.68A2 2 0 0 1 22 16.92z" />
+            </svg>
+            Call Us
+          </a>
+
+          <a
+            class="btn btn-secondary"
+            href="https://wa.me/919837271586?text=Hi%2C%20I%20would%20like%20to%20know%20more%20about%20ZZZ%20Kidz%20Move%20Lab."
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+              />
+            </svg>
+            Connect on WhatsApp
+          </a>
+        </div>
+
+      </div>
+    </main>
+  </body>
+</html>

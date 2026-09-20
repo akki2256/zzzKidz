@@ -2,6 +2,7 @@ import { Mail, Phone } from "lucide-react";
 import { ContactForm } from "@/components/sections/contact-form";
 import { StudioPageHero } from "@/components/studio-layout/studio-page-hero";
 import { StudioItemGrid, StudioSection } from "@/components/studio-layout/studio-blocks";
+import { PhoneLink, SocialLinks } from "@/components/shared/social-links";
 import { heroSlides } from "@/content/media";
 import { siteConfig, trustPillars } from "@/content/site";
 
@@ -42,11 +43,12 @@ export function StudioContactPage() {
               <div className="flex items-center gap-3 py-4">
                 <Phone className="h-4 w-4 shrink-0" aria-hidden />
                 <dt className="sr-only">Phone</dt>
-                <dd className="text-sm text-[#55555c]">
-                  {siteConfig.contact.phonePlaceholder}
+                <dd>
+                  <PhoneLink className="text-sm font-bold hover:underline" />
                 </dd>
               </div>
             </dl>
+            <SocialLinks className="mt-6" tone="original" />
           </div>
 
           <div className="border border-black/12 bg-white p-6 sm:p-9">

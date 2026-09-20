@@ -3,9 +3,11 @@ import { Mail } from "lucide-react";
 import { ContactForm } from "@/components/sections/contact-form";
 import { Container } from "@/components/shared/container";
 import { PageHero } from "@/components/shared/page-hero";
+import { PhoneLink, SocialLinks } from "@/components/shared/social-links";
 import { ActiveContactPage } from "@/components/active-layout/pages/active-contact-page";
 import { PulseContactPage } from "@/components/pulse-layout/pages/pulse-contact-page";
 import { StudioContactPage } from "@/components/studio-layout/pages/studio-contact-page";
+import { NoirStubPage } from "@/components/noir-layout/noir-stub-page";
 import { MultiLayoutPage } from "@/components/theme/multi-layout-page";
 import { siteConfig } from "@/content/site";
 
@@ -44,10 +46,11 @@ function OriginalContactPage() {
                   {siteConfig.contact.email}
                 </a>
               </li>
-              <li className="rounded-md border border-dashed border-border px-3 py-2 text-foreground-muted">
-                Phone: {siteConfig.contact.phonePlaceholder}
+              <li>
+                <PhoneLink className="inline-flex items-center gap-2 text-foreground transition-colors hover:text-accent" />
               </li>
             </ul>
+            <SocialLinks className="mt-6" tone="original" />
             <p className="mt-8 font-heading text-xl uppercase leading-snug">
               Let&apos;s move together.{" "}
               <span className="text-accent">Let&apos;s grow together.</span>
@@ -76,6 +79,7 @@ export default function ContactPage() {
       studio={<StudioContactPage />}
       active={<ActiveContactPage />}
       pulse={<PulseContactPage />}
+      noir={<NoirStubPage title="Contact" />}
     />
   );
 }

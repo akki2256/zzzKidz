@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { PhoneLink, SocialLinks } from "@/components/shared/social-links";
 import { siteConfig } from "@/content/site";
 
 const columns = [
@@ -47,6 +48,7 @@ export function StudioFooter() {
             <Link href={siteConfig.cta.primaryHref} className="studio-btn mt-8">
               {siteConfig.cta.primary}
             </Link>
+            <SocialLinks className="mt-8" tone="studio" />
           </div>
 
           <div className="grid gap-10 sm:grid-cols-3">
@@ -79,7 +81,7 @@ export function StudioFooter() {
           </p>
           <p className="flex items-start gap-2.5 text-xs text-white/60">
             <Phone className="mt-0.5 h-4 w-4 shrink-0 text-[#c8ff00]" aria-hidden />
-            {siteConfig.contact.phonePlaceholder}
+            <PhoneLink className="hover:text-white" />
           </p>
           <p className="flex items-start gap-2.5 text-xs text-white/60">
             <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#c8ff00]" aria-hidden />

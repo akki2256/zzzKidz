@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ActiveHomePage } from "@/components/active-layout/active-home-page";
+import { NoirHomePage } from "@/components/noir-layout/noir-home-page";
 import { OriginalHomePage } from "@/components/original-layout/original-home-page";
 import { PulseHomePage } from "@/components/pulse-layout/pulse-home-page";
 import { StudioHomePage } from "@/components/studio-layout/studio-home-page";
@@ -19,6 +20,7 @@ export default function HomePage() {
       studio={<StudioHomePage />}
       active={<ActiveHomePage />}
       pulse={<PulseHomePage />}
+      noir={<NoirHomePage />}
     />
   );
 }

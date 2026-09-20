@@ -7,6 +7,7 @@ import { Reveal } from "@/components/shared/reveal";
 import { ActiveHowItWorksPage } from "@/components/active-layout/pages/active-how-it-works-page";
 import { PulseHowItWorksPage } from "@/components/pulse-layout/pages/pulse-how-it-works-page";
 import { StudioHowItWorksPage } from "@/components/studio-layout/pages/studio-how-it-works-page";
+import { NoirStubPage } from "@/components/noir-layout/noir-stub-page";
 import { MultiLayoutPage } from "@/components/theme/multi-layout-page";
 import { approachPillars, processSteps } from "@/content/site";
 
@@ -24,6 +25,7 @@ export default function HowItWorksPage() {
       studio={<StudioHowItWorksPage />}
       active={<ActiveHowItWorksPage />}
       pulse={<PulseHowItWorksPage />}
+      noir={<NoirStubPage title="How It Works" />}
     />
   );
 }
