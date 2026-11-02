@@ -294,6 +294,30 @@ select {
   object-position: center 28%;
 }
 
+/* Mobile: full graphic, height matches image so no giant letterbox */
+@media (max-width: 767px) {
+  .hero {
+    margin-top: 0;
+    min-height: 0;
+    aspect-ratio: 1024 / 764;
+  }
+
+  .hero-media img {
+    object-fit: contain;
+    object-position: center center;
+  }
+
+  .hero-content {
+    min-height: 0;
+    height: 100%;
+    padding:
+      calc(1rem + var(--safe-top))
+      max(1rem, var(--safe-right))
+      calc(1rem + var(--safe-bottom))
+      max(1rem, var(--safe-left));
+  }
+}
+
 .hero-content {
   position: relative;
   z-index: 1;
