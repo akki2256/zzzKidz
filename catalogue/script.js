@@ -33,7 +33,7 @@
     const FOCUS_ITEM_VH = 58;
 
     function getImageItemHeight() {
-      return cards[0]?.offsetHeight || Math.round(imagesViewport?.clientWidth * (9 / 16)) || 360;
+      return cards[0]?.offsetHeight || Math.round(imagesViewport?.clientWidth * (2 / 3)) || 360;
     }
 
     const names = Array.from(activitiesSection.querySelectorAll("[data-activity-name]"));
@@ -48,11 +48,21 @@
     const steps = Math.max(COUNT - 1, 1);
     const focusSpread = 1.08 / steps;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const mobileQuery = window.matchMedia("(max-width: 767px)");
 
-    activitiesSection.style.height = reduceMotion
-      ? "auto"
-      : `${100 + steps * FOCUS_ITEM_VH}vh`;
-    activitiesSection.classList.toggle("is-reduced-motion", reduceMotion);
+    function isMobileLayout() {
+      return mobileQuery.matches;
+    }
+
+    function syncSectionMode() {
+      const stackMobile = isMobileLayout();
+      activitiesSection.classList.toggle("is-mobile-stack", stackMobile);
+      activitiesSection.classList.toggle("is-reduced-motion", reduceMotion && !stackMobile);
+      activitiesSection.style.height =
+        stackMobile || reduceMotion ? "auto" : `${100 + steps * FOCUS_ITEM_VH}vh`;
+    }
+
+    syncSectionMode();
 
     function clamp(value, min, max) {
       return Math.min(Math.max(value, min), max);
@@ -100,6 +110,24 @@
       const total = activitiesSection.offsetHeight - window.innerHeight;
       if (total <= 0) return 0;
       return clamp(-rect.top / total, 0, 1);
+    }
+
+    function applyStackedMobile() {
+      if (namesTrack) namesTrack.style.transform = "";
+      if (imagesTrack) imagesTrack.style.transform = "";
+
+      nameTitles.forEach((title) => {
+        if (!title) return;
+        title.style.opacity = "";
+        title.style.transform = "";
+      });
+      cards.forEach((card) => {
+        card.style.opacity = "";
+        card.style.transform = "";
+      });
+      overlays.forEach((overlay) => {
+        if (overlay) overlay.style.opacity = "";
+      });
     }
 
     function applyProgress(progress) {
@@ -191,13 +219,20 @@
       ticking = true;
       window.requestAnimationFrame(() => {
         ticking = false;
-        if (reduceMotion) applyReducedMotion();
+        syncSectionMode();
+        if (isMobileLayout()) applyStackedMobile();
+        else if (reduceMotion) applyReducedMotion();
         else applyProgress(sectionProgress());
       });
     }
 
     window.addEventListener("scroll", onScrollOrResize, { passive: true });
     window.addEventListener("resize", onScrollOrResize);
+    if (typeof mobileQuery.addEventListener === "function") {
+      mobileQuery.addEventListener("change", onScrollOrResize);
+    } else if (typeof mobileQuery.addListener === "function") {
+      mobileQuery.addListener(onScrollOrResize);
+    }
     onScrollOrResize();
   }
 
