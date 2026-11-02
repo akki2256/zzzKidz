@@ -284,7 +284,7 @@
     if (clearValues) form.reset();
     form.querySelectorAll(".is-invalid").forEach((el) => el.classList.remove("is-invalid"));
     submitBtn.disabled = false;
-    submitBtn.textContent = "REGISTER INTEREST";
+    submitBtn.textContent = "REGISTER NOW";
   }
 
   openButtons.forEach((btn) => btn.addEventListener("click", openModal));
@@ -401,7 +401,7 @@
       successView.querySelector("button")?.focus();
     } catch (error) {
       submitBtn.disabled = false;
-      submitBtn.textContent = "REGISTER INTEREST";
+      submitBtn.textContent = "REGISTER NOW";
       window.alert("Something went wrong. Please try again.");
       console.error(error);
     }
