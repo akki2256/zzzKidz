@@ -6,9 +6,7 @@ import { FeatureCard } from "@/components/shared/feature-card";
 import { MediaSlideshow } from "@/components/shared/media-slideshow";
 import { PageHero } from "@/components/shared/page-hero";
 import { Reveal } from "@/components/shared/reveal";
-import { ActiveProgramsPage } from "@/components/active-layout/pages/active-programs-page";
 import { PulseProgramsPage } from "@/components/pulse-layout/pages/pulse-programs-page";
-import { StudioProgramsPage } from "@/components/studio-layout/pages/studio-programs-page";
 import { NoirStubPage } from "@/components/noir-layout/noir-stub-page";
 import { MultiLayoutPage } from "@/components/theme/multi-layout-page";
 import { galleryImages, heroSlides } from "@/content/media";
@@ -125,8 +123,6 @@ export default function ProgramsPage() {
   return (
     <MultiLayoutPage
       original={<OriginalProgramsPage />}
-      studio={<StudioProgramsPage />}
-      active={<ActiveProgramsPage />}
       pulse={<PulseProgramsPage />}
       noir={<NoirStubPage title="Programs" />}
     />

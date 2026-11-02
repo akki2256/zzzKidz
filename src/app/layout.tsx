@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Libre_Baskerville, Manrope, Nunito } from "next/font/google";
+import { Bebas_Neue, Manrope } from "next/font/google";
 import { cookies } from "next/headers";
 import { RouteScrollManager } from "@/components/layout/route-scroll-manager";
 import { OrganizationJsonLd } from "@/components/shared/organization-json-ld";
@@ -20,22 +20,6 @@ const body = Manrope({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
   variable: "--font-manrope",
-  display: "swap",
-});
-
-/** Rounded friendly sans for Active (kids-movement) layout. */
-const activeSans = Nunito({
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
-  variable: "--font-active-sans",
-  display: "swap",
-});
-
-/** Serif display for Active mission / quote bands (activekids.org style). */
-const activeSerif = Libre_Baskerville({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-active-serif",
   display: "swap",
 });
 
@@ -86,7 +70,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       data-layout={initialLayout}
-      className={`${display.variable} ${body.variable} ${activeSans.variable} ${activeSerif.variable} h-full antialiased`}
+      className={`${display.variable} ${body.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col font-sans text-base leading-relaxed text-foreground">

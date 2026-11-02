@@ -52,14 +52,12 @@ const socialItems = [
 type SocialLinksProps = {
   className?: string;
   /** Visual tone for each layout. */
-  tone?: "pulse" | "studio" | "active" | "original";
+  tone?: "pulse" | "original";
 };
 
 const toneClass: Record<NonNullable<SocialLinksProps["tone"]>, string> = {
   pulse:
     "border-white/15 text-white/70 hover:border-[var(--p-accent)] hover:text-[var(--p-accent)]",
-  studio: "border-white/20 text-white/70 hover:border-[#c8ff00] hover:text-[#c8ff00]",
-  active: "border-white/35 text-white hover:border-white hover:bg-white/10",
   original:
     "border-border text-foreground-muted hover:border-accent hover:text-accent",
 };
@@ -78,8 +76,6 @@ export function SocialLinks({ className, tone = "pulse" }: SocialLinksProps) {
               "inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
               toneClass[tone],
               tone === "pulse" && "focus-visible:outline-[var(--p-accent)]",
-              tone === "studio" && "focus-visible:outline-[#c8ff00]",
-              tone === "active" && "focus-visible:outline-white",
               tone === "original" && "focus-visible:outline-accent",
             )}
             aria-label={`${label} (opens in a new tab)`}
